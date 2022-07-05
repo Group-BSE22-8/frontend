@@ -1,5 +1,5 @@
 //Reducers Imports
-import navigation from '../conponents/navigation/store'
+import navigation from '../components/navigation/store'
 
 const rootReducer = { 
     navigation
