@@ -48,7 +48,7 @@ function TopBar() {
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar sx = {{backgroundColor: '#fff'}} position="absolute" open={store.open}>
+        <AppBar sx = {{backgroundColor: '#3399ff'}} position="absolute" open={store.open}>
           <Toolbar
             sx={{
               pr: '24px',
@@ -74,7 +74,7 @@ function TopBar() {
               variant="h6"
               color="inherit"
               noWrap
-              sx={{ flexGrow: 1, marginLeft: 2, color: "#000"}}
+              sx={{ flexGrow: 1, marginLeft: 2, color: "#fff"}}
             >
               Crane Cloud
             </Typography>

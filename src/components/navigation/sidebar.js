@@ -8,9 +8,14 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { mainListItems, secondaryListItems } from './listItems';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import LayersIcon from '@mui/icons-material/Layers';
 import { useDispatch, useSelector } from 'react-redux';
 import { adjustDrawer } from './store';
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 200;
 
@@ -43,6 +48,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const theme = createTheme();
 
 function SideBar() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const store = useSelector(state => state.navigation)
   
@@ -69,9 +75,32 @@ function SideBar() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
+            <React.Fragment>
+              <ListItemButton  onClick={() => navigate("/dashboard")}>
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard" />
+              </ListItemButton>
+              <ListItemButton>
+                <ListItemIcon>
+                  <LayersIcon />
+                </ListItemIcon>
+                <ListItemText primary="Infrastructure" />
+              </ListItemButton>
+            </React.Fragment>
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            <React.Fragment>
+              {/*<ListSubheader component="div" inset>
+                Saved reports
+              </ListSubheader>
+              <ListItemButton>
+                <ListItemIcon>
+                  <AssignmentIcon />
+                </ListItemIcon>
+                <ListItemText primary="Current month" />
+             </ListItemButton>*/}
+            </React.Fragment>
           </List>
         </Drawer>
       </Box>

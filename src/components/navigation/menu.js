@@ -65,12 +65,15 @@ export default function CustomizedMenu(props) {
   return (
     <div>
       <Button
+        style={{ backgroundColor: 'transparent', outline: 'none', textTransform: 'none'}}
+        sx={{color: "#fff"}}
         id="demo-customized-button"
         aria-controls={open ? 'demo-customized-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         variant="contained"
         disableElevation
+        disableRipple
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
       >
@@ -88,19 +91,6 @@ export default function CustomizedMenu(props) {
         <MenuItem onClick={handleClose} disableRipple>
           <EditIcon />
           Edit
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          <FileCopyIcon />
-          Duplicate
-        </MenuItem>
-        <Divider sx={{ my: 0.5 }} />
-        <MenuItem onClick={handleClose} disableRipple>
-          <ArchiveIcon />
-          Archive
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          <MoreHorizIcon />
-          More
         </MenuItem>
       </StyledMenu>
     </div>
