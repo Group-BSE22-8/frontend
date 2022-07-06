@@ -6,24 +6,16 @@ import Card from '@mui/material/Card';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import CardContent from '@mui/material/CardContent';
 import TopBar from '../../components/navigation/appbar';
 import SideBar from '../../components/navigation/sidebar';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { MDBDataTable } from 'mdbreact';
 import 'mdbreact/dist/css/mdb.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
-import { Avatar } from '@mui/material';
-import cluster from '../images/cluster.png'; 
-import project from '../images/project.png'; 
-import application from '../images/app.png'; 
-import users from '../images/users.png'; 
-import resource from '../images/resource.png'; 
 
 function Copyright(props) {
   return (
@@ -126,7 +118,7 @@ const dat = {
   ],
   rows: [
     {
-      name: 'Tiger Nixon',
+      name: <Link href = '/dashboard'>Tiger Nixon</Link>,
       position: 'System Architect',
       office: 'Edinburgh',
       age: '61',
@@ -584,7 +576,7 @@ const dat = {
   ]
 };
 
-function DashboardContent() {
+export default function Project() {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
@@ -607,314 +599,58 @@ function DashboardContent() {
           <Toolbar />
           <Container  sx={{ mt: 2, mb: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs ={1} sm ={1} md={1} lg={1}>
-              </Grid>
-              <Grid item xs ={12} sm ={2} md={2} lg={2}>
+              <Grid item xs ={12} sm ={2} md={2} lg={4}>
                 <Paper
                   sx={{
                     p: 2,
                     height: 160,
-                    paddingTop: 5,
-                    ':hover': {
-                      boxShadow: 5,
-                    },                
-                  }}
-                >
-                  <Stack 
-                    direction="column"                 
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Avatar variant = 'square' sx={{ width: 60, height: 60}} alt="clusters" src={cluster}/>
-                  </Stack>
-
-                  <Box
-                    sx={{
-                      pt: 2,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Typography sx = {{fontSize: 18, marginRight: 1}}>Clusters:  </Typography>
-                    <Typography sx = {{fontSize: 18}}>3</Typography>
-                  </Box>
-                </Paper>
-              </Grid>
-
-              <Grid item xs ={12} sm ={2} md={2} lg={2}>
-              <Paper
-                  sx={{
-                    p: 2,
-                    height: 160,
-                    paddingTop: 5,
-                    ':hover': {
-                      boxShadow: 5,
-                    },                
-                  }}
-                >
-                  <Stack 
-                    direction="column"                 
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Avatar variant = 'square' sx={{ width: 60, height: 60}} alt="projects" src={project}/>
-                  </Stack>
-
-                  <Box
-                    sx={{
-                      pt: 2,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Typography sx = {{fontSize: 18, marginRight: 1}}>Projects:  </Typography>
-                    <Typography sx = {{fontSize: 18}}>38</Typography>
-                  </Box>
-                </Paper>
-              </Grid>
-
-              <Grid item xs ={12} sm ={2} md={2} lg={2}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    height: 160,
-                    paddingTop: 5,
-                    ':hover': {
-                      boxShadow: 5,
-                    },                
-                  }}
-                >
-                  <Stack 
-                    direction="column"                 
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Avatar variant = 'square' sx={{ width: 60, height: 60}} alt="applications" src={application}/>
-                  </Stack>
-
-                  <Box
-                    sx={{
-                      pt: 2,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Typography sx = {{fontSize: 18, marginRight: 1}}>Applications:  </Typography>
-                    <Typography sx = {{fontSize: 18}}>78</Typography>
-                  </Box>
-                </Paper>
-              </Grid>
-
-              <Grid item xs ={12} sm ={2} md={2} lg={2}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    height: 160,
-                    paddingTop: 5,
-                    ':hover': {
-                      boxShadow: 5,
-                    }               
-                  }}
-                >
-                  <Stack 
-                    direction="column"                 
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Avatar variant = 'square' sx={{ width: 60, height: 60}} alt="users" src={users}/>
-                  </Stack>
-
-                  <Box
-                    sx={{
-                      pt: 2,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Typography sx = {{fontSize: 18, marginRight: 1}}>Users:  </Typography>
-                    <Typography sx = {{fontSize: 18}}>85</Typography>
-                  </Box>
-                </Paper>
-              </Grid>
-
-              <Grid item xs ={12} sm ={2} md={2} lg={2}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    height: 160,
+                    textAlign: 'center',
                     paddingTop: 5
                   }}
                 >
-                  <Stack 
-                    direction="column"                 
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Avatar variant = 'square' sx={{ width: 60, height: 60}} alt="Resources" src={resource}/>
-                  </Stack>
-
-                  <Box
-                    sx={{
-                      pt: 2,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Typography sx = {{fontSize: 18, marginRight: 1}}>Resources:  </Typography>
-                    <Typography sx = {{fontSize: 18}}>56</Typography>
-                  </Box>
+                  <Typography sx = {{fontSize: 20}}>Clusters</Typography>
+                  <Typography sx = {{fontSize: 30}}>3</Typography>
                 </Paper>
               </Grid>
-              <Grid item xs ={1} sm ={1} md={1} lg={1}>
+
+              <Grid item xs ={12} sm ={2} md={2} lg={4}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    height: 160,
+                    textAlign: 'center',
+                    paddingTop: 5
+                  }}
+                >
+                  <Typography sx = {{fontSize: 20}}>Projects</Typography>
+                  <Typography sx = {{fontSize: 30}}>38</Typography>
+                </Paper>
               </Grid>
+
+              <Grid item xs ={12} sm ={2} md={2} lg={4}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    height: 160,
+                    textAlign: 'center',
+                    paddingTop: 5
+                  }}
+                >
+                  <Typography sx = {{fontSize: 20}}>Projects</Typography>
+                  <Typography sx = {{fontSize: 30}}>38</Typography>
+                </Paper>
+              </Grid>
+
             </Grid>
 
             <Card sx={{marginTop: 3}}>
               <Box 
                 sx ={{
                   fontSize: 10,
-                  backgroundColor: "#008ac1", 
+                  backgroundColor: "#3399ff", 
                   paddingLeft: 2,
                 }}>
-                 <Typography sx = {{fontSize: 17, color: "#fff"}}>System status</Typography>
-              </Box>
-              <CardContent>
-                <Grid container spacing={3}>
-                  <Grid item xs ={12} sm ={3} md={3} lg={3}>
-                    <Paper
-                      sx={{
-                        height: 200,
-                      }}
-                    >
-                      <ResponsiveContainer width="100%" height="85%">
-                        <LineChart
-                          width={500}
-                          height={300}
-                          data={data}
-                          margin={{
-                            top: 10,
-                            right: 40,
-                            left: 0,
-                            bottom: 5,
-                          }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                      <Typography sx = {{textAlign: "center", fontSize: 15}}>System Activity</Typography>
-                    </Paper>
-                  </Grid>
-
-                  <Grid item xs ={12} sm ={3} md={3} lg={3}>
-                    <Paper
-                      sx={{
-                        height: 200,
-                      }}
-                    >
-                      <ResponsiveContainer width="100%" height="85%">
-                        <LineChart
-                          width={500}
-                          height={300}
-                          data={data}
-                          margin={{
-                            top: 10,
-                            right: 40,
-                            left: 0,
-                            bottom: 5,
-                          }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                      <Typography sx = {{textAlign: "center", fontSize: 15}}>Network Usage</Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs ={12} sm ={3} md={3} lg={3}>
-                    <Paper
-                      sx={{
-                        height: 200,
-                      }}
-                    >
-                      <ResponsiveContainer width="100%" height="85%">
-                        <LineChart
-                          width={500}
-                          height={300}
-                          data={data}
-                          margin={{
-                            top: 10,
-                            right: 40,
-                            left: 0,
-                            bottom: 5,
-                          }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                      <Typography sx = {{textAlign: "center", fontSize: 15}}>Disk Usage</Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs ={12} sm ={3} md={3} lg={3}>
-                    <Paper
-                      sx={{
-                        height: 200,
-                      }}
-                    >
-                      <ResponsiveContainer width="100%" height="85%">
-                        <LineChart
-                          width={500}
-                          height={300}
-                          data={data}
-                          margin={{
-                            top: 10,
-                            right: 40,
-                            left: 0,
-                            bottom: 5,
-                          }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                      <Typography sx = {{textAlign: "center", fontSize: 15}}>Memory Usage</Typography>
-                    </Paper>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-
-            <Card sx={{marginTop: 3}}>
-              <Box 
-                sx ={{
-                  fontSize: 10,
-                  backgroundColor: "#008ac1", 
-                  paddingLeft: 3,
-                }}>
-                 <Typography sx = {{fontSize: 17, color: "#fff"}}>Recent Activity</Typography>
+                 <Typography sx = {{fontSize: 17}}>Projects</Typography>
               </Box>
               <CardContent>
                 <MDBDataTable
@@ -933,6 +669,3 @@ function DashboardContent() {
   );
 }
 
-export default function Dashboard() {
-  return <DashboardContent />;
-}

@@ -77,7 +77,7 @@ export default function CustomizedMenu(props) {
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
       >
-        Andrew
+        Andrew Opio
       </Button>
       <StyledMenu
         id="demo-customized-menu"

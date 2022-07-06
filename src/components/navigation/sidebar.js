@@ -76,7 +76,10 @@ function SideBar() {
           <Divider />
           <List component="nav">
             <React.Fragment>
-              <ListItemButton  onClick={() => navigate("/dashboard")}>
+              <ListItemButton  onClick={() => {
+                navigate("/dashboard")
+                navigate(0)
+              }}>
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
@@ -87,6 +90,15 @@ function SideBar() {
                   <LayersIcon />
                 </ListItemIcon>
                 <ListItemText primary="Infrastructure" />
+              </ListItemButton>
+              <ListItemButton onClick={() => {
+                navigate("/projects")
+                navigate(0)
+              }}>
+                <ListItemIcon>
+                  <LayersIcon />
+                </ListItemIcon>
+                <ListItemText primary="Projects" />
               </ListItemButton>
             </React.Fragment>
             <Divider sx={{ my: 1 }} />
