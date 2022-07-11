@@ -16,6 +16,7 @@ import { MDBDataTable } from 'mdbreact';
 import 'mdbreact/dist/css/mdb.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 function Copyright(props) {
   return (
@@ -80,51 +81,84 @@ const data = [
 const dat = {
   columns: [
     {
-      label: 'Name',
-      field: 'name',
+      label: 'Projects',
+      field: 'project',
       sort: 'asc',
       width: 150
     },
     {
-      label: 'Position',
-      field: 'position',
+      label: 'Applications',
+      field: 'application',
       sort: 'asc',
       width: 270
     },
     {
-      label: 'Office',
-      field: 'office',
+      label: 'Description',
+      field: 'description',
       sort: 'asc',
       width: 200
     },
     {
-      label: 'Age',
-      field: 'age',
+      label: 'Status',
+      field: 'status',
       sort: 'asc',
       width: 100
     },
     {
-      label: 'Start date',
-      field: 'date',
+      label: 'Created By',
+      field: 'created_by',
       sort: 'asc',
       width: 150
     },
     {
-      label: 'Salary',
-      field: 'salary',
+      label: 'Actions',
+      field: 'actions',
       sort: 'asc',
       width: 100
     }
   ],
   rows: [
     {
-      name: <Link href = '/dashboard'>Tiger Nixon</Link>,
-      position: 'System Architect',
-      office: 'Edinburgh',
-      age: '61',
-      date: '2011/04/25',
-      salary: '$320'
+      project: <Link href = '/applications'>Tiger Nixon</Link>,
+      application: 'System Architect',
+      description: 'Edinburgh',
+      status: '61',
+      created_by: '2011/04/25',
+      actions: <MoreVertIcon/>
     },
+    {
+      project: <Link href = '/applications'>Tiger Nixon</Link>,
+      application: 'System Architect',
+      description: 'Edinburgh',
+      status: '61',
+      created_by: '2011/04/25',
+      actions: <MoreVertIcon/>
+    },
+    {
+      project: <Link href = '/applications'>Tiger Nixon</Link>,
+      application: 'System Architect',
+      description: 'Edinburgh',
+      status: '61',
+      created_by: '2011/04/25',
+      actions: <MoreVertIcon/>
+    },
+    {
+      project: <Link href = '/applications'>Tiger Nixon</Link>,
+      application: 'System Architect',
+      description: 'Edinburgh',
+      status: '61',
+      created_by: '2011/04/25',
+      actions: <MoreVertIcon/>
+    },
+    {
+      project: <Link href = '/applications'>Tiger Nixon</Link>,
+      application: 'System Architect',
+      description: 'Edinburgh',
+      status: '61',
+      created_by: '2011/04/25',
+      actions: <MoreVertIcon/>
+    },
+
     {
       name: 'Garrett Winters',
       position: 'Accountant',
@@ -599,17 +633,32 @@ export default function Project() {
           <Toolbar />
           <Container  sx={{ mt: 2, mb: 4 }}>
             <Grid container spacing={3}>
+              <Grid item xs ={1} sm ={1} md={1} lg={2}>
+              </Grid>
               <Grid item xs ={12} sm ={2} md={2} lg={4}>
                 <Paper
                   sx={{
                     p: 2,
                     height: 160,
-                    textAlign: 'center',
-                    paddingTop: 5
+                    paddingTop: 5,
+                    ':hover': {
+                      boxShadow: 5,
+                    }               
                   }}
                 >
-                  <Typography sx = {{fontSize: 20}}>Clusters</Typography>
-                  <Typography sx = {{fontSize: 30}}>3</Typography>
+                  <Box sx ={{
+                    textAlign: 'center'
+                  }}>
+                    <Typography sx = {{fontSize: 20}}>Projects</Typography>
+                    <Typography sx = {{fontSize: 30}}>38</Typography>
+                  </Box>
+
+                  <Box sx={{
+                    display: 'flex',
+                  }}>
+                    <Typography sx = {{fontSize: 16, flexGrow:1, color: "green"}}>Active: <span>26</span></Typography>
+                    <Typography sx = {{fontSize: 16, float:'right', color: "red"}}>Disabled: <span>35</span></Typography>
+                  </Box>
                 </Paper>
               </Grid>
 
@@ -618,39 +667,38 @@ export default function Project() {
                   sx={{
                     p: 2,
                     height: 160,
-                    textAlign: 'center',
-                    paddingTop: 5
+                    paddingTop: 5,
+                    ':hover': {
+                      boxShadow: 5,
+                    }               
                   }}
                 >
-                  <Typography sx = {{fontSize: 20}}>Projects</Typography>
-                  <Typography sx = {{fontSize: 30}}>38</Typography>
-                </Paper>
-              </Grid>
-
-              <Grid item xs ={12} sm ={2} md={2} lg={4}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    height: 160,
+                  <Box sx ={{
                     textAlign: 'center',
-                    paddingTop: 5
-                  }}
-                >
-                  <Typography sx = {{fontSize: 20}}>Projects</Typography>
-                  <Typography sx = {{fontSize: 30}}>38</Typography>
+                  }}>
+                    <Typography sx = {{fontSize: 20}}>Applications</Typography>
+                    <Typography sx = {{fontSize: 30}}>54</Typography>
+                  </Box>
+                  <Box sx={{
+                    display: 'flex',
+                  }}>
+                    <Typography sx = {{fontSize: 16, flexGrow:1, color: "green"}}>Active:   <span>26</span></Typography>
+                    <Typography  align="right" sx = {{fontSize: 16, color: "red"}}>Disabled: <span>35</span></Typography>
+                  </Box>
                 </Paper>
               </Grid>
-
+              <Grid item xs ={1} sm ={1} md={1} lg={2}>
+              </Grid>
             </Grid>
 
             <Card sx={{marginTop: 3}}>
               <Box 
                 sx ={{
                   fontSize: 10,
-                  backgroundColor: "#3399ff", 
+                  backgroundColor: "#008ac1", 
                   paddingLeft: 2,
                 }}>
-                 <Typography sx = {{fontSize: 17}}>Projects</Typography>
+                 <Typography sx = {{fontSize: 17, color: "#fff"}}><b>Projects</b></Typography>
               </Box>
               <CardContent>
                 <MDBDataTable
