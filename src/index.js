@@ -14,8 +14,7 @@ root.render(
     <Provider store={store}>
       <LazyApp />
     </Provider>
-  </BrowserRouter>,
-  document.getElementById('root')
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -750,7 +750,10 @@ function DashboardContent() {
                   sx={{
                     p: 2,
                     height: 160,
-                    paddingTop: 5
+                    paddingTop: 5,
+                    ':hover': {
+                      boxShadow: 5,
+                    }               
                   }}
                 >
                   <Stack 
@@ -786,7 +789,7 @@ function DashboardContent() {
                   backgroundColor: "#008ac1", 
                   paddingLeft: 2,
                 }}>
-                 <Typography sx = {{fontSize: 17, color: "#fff"}}>System status</Typography>
+                 <Typography sx = {{fontSize: 17, color: "#fff"}}><b>System status</b></Typography>
               </Box>
               <CardContent>
                 <Grid container spacing={3}>
@@ -812,7 +815,7 @@ function DashboardContent() {
                           <XAxis dataKey="name" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+                          <Line type="monotone" dataKey="pv" stroke="#008ac1" activeDot={{ r: 8 }} />
                         </LineChart>
                       </ResponsiveContainer>
                       <Typography sx = {{textAlign: "center", fontSize: 15}}>System Activity</Typography>
@@ -841,7 +844,7 @@ function DashboardContent() {
                           <XAxis dataKey="name" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+                          <Line type="monotone" dataKey="pv" stroke="#008ac1" activeDot={{ r: 8 }} />
                         </LineChart>
                       </ResponsiveContainer>
                       <Typography sx = {{textAlign: "center", fontSize: 15}}>Network Usage</Typography>
@@ -869,7 +872,7 @@ function DashboardContent() {
                           <XAxis dataKey="name" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+                          <Line type="monotone" dataKey="pv" stroke="#008ac1" activeDot={{ r: 8 }} />
                         </LineChart>
                       </ResponsiveContainer>
                       <Typography sx = {{textAlign: "center", fontSize: 15}}>Disk Usage</Typography>
@@ -897,7 +900,7 @@ function DashboardContent() {
                           <XAxis dataKey="name" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+                          <Line type="monotone" dataKey="pv" stroke="#008ac1" activeDot={{ r: 8 }} />
                         </LineChart>
                       </ResponsiveContainer>
                       <Typography sx = {{textAlign: "center", fontSize: 15}}>Memory Usage</Typography>
@@ -914,7 +917,7 @@ function DashboardContent() {
                   backgroundColor: "#008ac1", 
                   paddingLeft: 3,
                 }}>
-                 <Typography sx = {{fontSize: 17, color: "#fff"}}>Recent Activity</Typography>
+                 <Typography sx = {{fontSize: 17, color: "#fff"}}><b>Recent Activity</b></Typography>
               </Box>
               <CardContent>
                 <MDBDataTable
