@@ -17,6 +17,7 @@ import 'mdbreact/dist/css/mdb.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import FolderIcon from '@mui/icons-material/Folder';
 
 function Copyright(props) {
   return (
@@ -695,10 +696,12 @@ export default function Project() {
               <Box 
                 sx ={{
                   fontSize: 10,
+                  display: "flex",
                   backgroundColor: "#008ac1", 
                   paddingLeft: 2,
                 }}>
-                 <Typography sx = {{fontSize: 17, color: "#fff"}}><b>Projects</b></Typography>
+                 <Typography sx = {{flexGrow: 1, fontSize: 17, color: "#fff"}}><b>Projects</b></Typography>
+                 <FolderIcon sx = {{color: "#fff", marginRight: 2}}/>
               </Box>
               <CardContent>
                 <MDBDataTable

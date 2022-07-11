@@ -24,6 +24,8 @@ import project from '../images/project.png';
 import application from '../images/app.png'; 
 import users from '../images/users.png'; 
 import resource from '../images/resource.png'; 
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import EqualizerIcon from '@mui/icons-material/Equalizer';
 
 function Copyright(props) {
   return (
@@ -786,10 +788,12 @@ function DashboardContent() {
               <Box 
                 sx ={{
                   fontSize: 10,
+                  display: "flex",
                   backgroundColor: "#008ac1", 
                   paddingLeft: 2,
                 }}>
-                 <Typography sx = {{fontSize: 17, color: "#fff"}}><b>System status</b></Typography>
+                 <Typography sx = {{flexGrow: 1, fontSize: 17, color: "#fff"}}><b>System status</b></Typography>
+                 <EqualizerIcon sx = {{color: "#fff", marginRight: 2}}/>
               </Box>
               <CardContent>
                 <Grid container spacing={3}>
@@ -914,10 +918,12 @@ function DashboardContent() {
               <Box 
                 sx ={{
                   fontSize: 10,
+                  display: "flex",
                   backgroundColor: "#008ac1", 
                   paddingLeft: 3,
                 }}>
-                 <Typography sx = {{fontSize: 17, color: "#fff"}}><b>Recent Activity</b></Typography>
+                 <Typography sx = {{flexGrow: 1, fontSize: 17, color: "#fff"}}><b>Recent Activity</b></Typography>
+                 <LocalActivityIcon sx = {{color: "#fff", marginRight: 2}}/>
               </Box>
               <CardContent>
                 <MDBDataTable

@@ -8,6 +8,9 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import FolderIcon from '@mui/icons-material/Folder';
+import HubIcon from '@mui/icons-material/Hub';
+import MiscellaneousServicesIcon from '@mui/icons-material/MiscellaneousServices';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -16,6 +19,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 import { useDispatch, useSelector } from 'react-redux';
 import { adjustDrawer } from './store';
 import { useNavigate } from "react-router-dom";
+import { Hub } from '@mui/icons-material';
 
 const drawerWidth = 200;
 
@@ -87,7 +91,7 @@ function SideBar() {
               </ListItemButton>
               <ListItemButton>
                 <ListItemIcon>
-                  <LayersIcon />
+                  <Hub />
                 </ListItemIcon>
                 <ListItemText primary="Infrastructure" />
               </ListItemButton>
@@ -96,7 +100,7 @@ function SideBar() {
                 navigate(0)
               }}>
                 <ListItemIcon>
-                  <LayersIcon />
+                  <FolderIcon />
                 </ListItemIcon>
                 <ListItemText primary="Projects" />
               </ListItemButton>

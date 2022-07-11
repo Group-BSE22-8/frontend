@@ -17,6 +17,7 @@ import 'mdbreact/dist/css/mdb.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import { Button } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -780,10 +781,12 @@ export default function  Application() {
               <Box 
                 sx ={{
                   fontSize: 10,
+                  display: "flex",
                   backgroundColor: "#008ac1", 
-                  paddingLeft: 2,
+                  paddingLeft: 3,
                 }}>
-                 <Typography sx = {{fontSize: 17, color: "#fff"}}><b>Recent Activity</b></Typography>
+                 <Typography sx = {{flexGrow: 1, fontSize: 17, color: "#fff"}}><b>Recent Activity</b></Typography>
+                 <LocalActivityIcon sx = {{color: "#fff", marginRight: 2}}/>
               </Box>
               <CardContent>
                 <MDBDataTable
