@@ -13,7 +13,7 @@ import Link from '@mui/material/Link';
 import CardContent from '@mui/material/CardContent';
 import TopBar from '../../components/navigation/appbar';
 import SideBar from '../../components/navigation/sidebar';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { MDBDataTable } from 'mdbreact';
 import 'mdbreact/dist/css/mdb.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -833,7 +833,7 @@ function DashboardContent() {
                       }}
                     >
                       <ResponsiveContainer width="100%" height="85%">
-                        <LineChart
+                        <BarChart
                           width={500}
                           height={300}
                           data={data}
@@ -848,8 +848,8 @@ function DashboardContent() {
                           <XAxis dataKey="name" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#008ac1" activeDot={{ r: 8 }} />
-                        </LineChart>
+                          <Bar dataKey="pv" fill="#008ac1"/>
+                        </BarChart>
                       </ResponsiveContainer>
                       <Typography sx = {{textAlign: "center", fontSize: 15}}>Network Usage</Typography>
                     </Paper>
@@ -861,23 +861,19 @@ function DashboardContent() {
                       }}
                     >
                       <ResponsiveContainer width="100%" height="85%">
-                        <LineChart
+                        <PieChart
                           width={500}
                           height={300}
                           data={data}
                           margin={{
                             top: 10,
                             right: 40,
-                            left: 0,
+                            left: 40,
                             bottom: 5,
                           }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip />
-                          <Line type="monotone" dataKey="pv" stroke="#008ac1" activeDot={{ r: 8 }} />
-                        </LineChart>
+                          <Pie data={data} dataKey="pv" outerRadius={75} fill="#008ac1" />
+                        </PieChart>
                       </ResponsiveContainer>
                       <Typography sx = {{textAlign: "center", fontSize: 15}}>Disk Usage</Typography>
                     </Paper>
@@ -930,6 +926,7 @@ function DashboardContent() {
                   striped
                   bordered
                   small
+                  hover
                   data={dat}
                 />
               </CardContent>
