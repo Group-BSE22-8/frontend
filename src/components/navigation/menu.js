@@ -3,9 +3,11 @@ import { styled, alpha } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import EditIcon from '@mui/icons-material/Edit';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import Logout from '@mui/icons-material/Logout';
+import Person from '@mui/icons-material/Person';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Cookies from 'universal-cookie'
+import { useNavigate } from "react-router-dom";
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -49,13 +51,21 @@ const StyledMenu = styled((props) => (
 }));
 
 export default function CustomizedMenu(props) {
+  const cookies = new Cookies()
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const logout = () => {
+    //cookies.remove('cookie_data')
+    navigate("/")
   };
 
   
@@ -74,7 +84,7 @@ export default function CustomizedMenu(props) {
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
       >
-        Andrew Opio
+        {cookies.get('cookie_data').username}
       </Button>
       <StyledMenu
         id="demo-customized-menu"
@@ -86,8 +96,12 @@ export default function CustomizedMenu(props) {
         onClose={handleClose}
       >
         <MenuItem onClick={handleClose} disableRipple>
-          <EditIcon />
-          Edit
+          <Person />
+          Profile
+        </MenuItem>
+        <MenuItem onClick={logout} disableRipple>
+          <Logout />
+          Logout
         </MenuItem>
       </StyledMenu>
     </div>

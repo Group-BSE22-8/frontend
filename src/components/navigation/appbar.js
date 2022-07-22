@@ -12,7 +12,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useDispatch, useSelector } from 'react-redux';
 import { adjustDrawer } from './store';
 import CustomizedMenu from './menu';
-import { AlignVerticalCenterOutlined } from '@mui/icons-material';
+import Cookies from 'universal-cookie'
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 200;
 
@@ -38,8 +39,20 @@ const theme = createTheme();
 
 function TopBar() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const cookies = new Cookies()
   const store = useSelector(state => state.navigation)
+  const user = useSelector(state => state.auth)
+  const [username, setUsername] = React.useState("")
 
+  //** ComponentDidMount
+  React.useEffect(() => {
+   if (document.cookie.indexOf('cookie_data=')) {
+      //navigate("/")
+   }
+
+   console.log(document.cookie.indexOf('cookie_data='))
+  }, [])
 
   const toggleDrawer = () => {
     dispatch(adjustDrawer({open: true}));
@@ -65,7 +78,7 @@ function TopBar() {
                 ...(store.open && { display: 'none' }),
               }}
             >
-              <MenuIcon sx ={{color: "#fff"}}/>
+              <MenuIcon sx ={{color: "#fff"}} username = {username}/>
             </IconButton>
             <div style={{backgroundColor: "#fff"}}>
             <svg sx ={{color: "#fff"}} width="50" height="30"  xmlns="http://www.w3.org/2000/svg" >
