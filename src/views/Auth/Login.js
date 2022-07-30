@@ -56,13 +56,13 @@ export default function SignIn() {
       cookies.set('cookie_data', store.cookie_data, { path: '/' })
       navigate("/dashboard");
 
-    } /*else {
+    } else if (store.status === 'fail') {
       setValues({
         ...values,
         visibility: true,
         text: "Wrong email or password." 
       });    
-    }*/
+    }
 
   }, [store.status])
 

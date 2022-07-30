@@ -12,28 +12,57 @@ export const getProjects = createAsyncThunk('appProjects/getProjects', async () 
   return response.data
 })
 
-export const getApps = createAsyncThunk('appProjects/getApps', async () => {
-  const response = await axios.get('http://127.0.0.1:5000/applications')
+export const projectStatus = createAsyncThunk('appProjects/projectStatus', async (data) => {
+  const response = await axios.patch('http://127.0.0.1:5000/project/status', data)
   return response.data
 })
-  
+
+export const projectCount = createAsyncThunk('appProjects/projectCount', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/projects/count')
+  return response.data
+})
+
+export const appCount = createAsyncThunk('appProjects/appCount', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/apps/count')
+  return response.data
+})
+
+export const setStatus = createAsyncThunk('appProjects/setStatus', async () => {
+  return {status: ''}
+})
 
 export const appProjectsSlice = createSlice({
   name: 'appProjects',
   initialState: {
     projects: [],
-    applications: 0,
+    project_status: null,
+    active_projects: 0,
+    inactive_projects: 0,
+    active_apps: 0,
+    inactive_apps: 0
   },
   reducers: {},
   extraReducers: builder => {
     builder
       .addCase(getProjects.fulfilled, (state, action) => {
           state.projects = action.payload.data.projects
-          console.log(action.payload)
+          //console.log(action.payload)
       })
-      .addCase(getApps.fulfilled, (state, action) => {
-          console.log(action.payload)
+      .addCase(projectStatus.fulfilled, (state, action) => {
+          //state.project_status = Math.random(10, 100000);
       })
+      .addCase(projectCount.fulfilled, (state, action) => {
+        state.active_projects = action.payload.data.active
+        state.inactive_projects = action.payload.data.inactive
+      })
+      .addCase(appCount.fulfilled, (state, action) => {
+        console.log(action.payload)
+        state.active_apps = action.payload.data.active
+        state.inactive_apps = action.payload.data.inactive
+      })
+      .addCase(setStatus.fulfilled, (state, action) => {
+        state.project_status = Math.random();
+    })
   }
 })
 

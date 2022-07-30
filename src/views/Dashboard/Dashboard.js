@@ -559,7 +559,7 @@ function DashboardContent() {
                 <MDBDataTable striped bordered small hover data={dat} />
               </CardContent>
             </Card>
-            <Copyright sx={{ pt: 4 }} />
+            <Copyright sx={{ pt: 4, mb: 4,  bottom:0, width:"100%", height:60}} />
           </Container>
         </Box>
       </Box>

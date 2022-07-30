@@ -28,7 +28,7 @@ export const appAuthSlice = createSlice({
           state.cookie_data.token = action.payload.data.access_token
           state.cookie_data.username = action.payload.data.username
           state.cookie_data.id = action.payload.data.id
-          //console.log(action.payload)
+          console.log(action.payload.status)
       })
   }
 })

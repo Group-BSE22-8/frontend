@@ -7,8 +7,13 @@ import Cookies from 'universal-cookie'
 
 const cookies = new Cookies()
 
-export const getProjects = createAsyncThunk('appApps/getProjects', async () => {
+export const getProject = createAsyncThunk('appApps/getProject', async () => {
   const response = await axios.get('http://127.0.0.1:5000/projects')
+  return response.data
+})
+
+export const getOwner = createAsyncThunk('appApps/getOwner', async (id) => {
+  const response = await axios.get('http://127.0.0.1:5000/users/'+id)
   return response.data
 })
 
@@ -17,22 +22,45 @@ export const getApps = createAsyncThunk('appApps/getApps', async (id) => {
   return response.data
 })
   
+export const applicationStatus = createAsyncThunk('appApps/applicationStatus', async (data) => {
+  const response = await axios.patch('http://127.0.0.1:5000/app/status', data)
+  return response.data
+})
+
+export const appCount = createAsyncThunk('appProjects/appCount', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/apps/count')
+  return response.data
+})
+
 
 export const appAppsSlice = createSlice({
   name: 'appApps',
   initialState: {
     projects: 0,
-    applications: [],
+    owner: '',
+    app_status: '',
+    apps: [],
   },
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(getProjects.fulfilled, (state, action) => {
+      .addCase(getProject.fulfilled, (state, action) => {
           state.projects = action.payload
-          console.log(action.payload)
       })
       .addCase(getApps.fulfilled, (state, action) => {
-          console.log(action.payload)
+          state.apps = action.payload.data.apps
+          console.log(action.payload.data.apps)
+      })
+      .addCase(getOwner.fulfilled, (state, action) => {
+          state.owner = action.payload.data.user.name
+      })
+      .addCase(applicationStatus.fulfilled, (state, action) => {
+          state.app_status = action.payload.status;
+      })
+      .addCase(appCount.fulfilled, (state, action) => {
+        console.log(action.payload)
+        state.active_apps = action.payload.data.active
+        state.inactive_apps = action.payload.data.inactive
       })
   }
 })

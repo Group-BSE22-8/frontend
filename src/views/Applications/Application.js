@@ -1,5 +1,6 @@
 import * as React from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { styled, alpha } from '@mui/material/styles';
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -9,6 +10,7 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
+import Chip from "@mui/material/Chip";
 import CardContent from "@mui/material/CardContent";
 import TopBar from "../../components/navigation/appbar";
 import SideBar from "../../components/navigation/sidebar";
@@ -19,6 +21,12 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import AppsIcon from "@mui/icons-material/Apps";
+import UnpublishedIcon from '@mui/icons-material/Unpublished';
+import RestoreIcon from '@mui/icons-material/Restore';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
 import { Button } from "@mui/material";
 import {
   LineChart,
@@ -31,7 +39,8 @@ import {
 } from "recharts";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getApps } from "./store";
+import { getApps, getOwner, applicationStatus, appCount } from "./store";
+import Cookies from 'universal-cookie'
 
 function Copyright(props) {
   return (
@@ -52,6 +61,48 @@ function Copyright(props) {
 }
 
 const theme = createTheme();
+
+const StyledMenu = styled((props) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'right',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'right',
+    }}
+    {...props}
+  />
+))(({ theme }) => ({
+  '& .MuiPaper-root': {
+    borderRadius: 6,
+    marginTop: theme.spacing(1),
+    minWidth: 100,
+    color:
+      theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
+    boxShadow:
+      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+    '& .MuiMenu-list': {
+      padding: '4px 0',
+    },
+    '& .MuiMenuItem-root': {
+      '& .MuiSvgIcon-root': {
+        fontSize: 18,
+        color: theme.palette.text.secondary,
+        marginRight: theme.spacing(1.5),
+      },
+      '&:active': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          theme.palette.action.selectedOpacity,
+        ),
+      },
+    },
+  },
+}));
+
 
 const data = [
   {
@@ -98,65 +149,146 @@ const data = [
   },
 ];
 
-const dat = {
-  columns: [
-    {
-      label: "Name",
-      field: "name",
-      sort: "asc",
-      width: 150,
-    },
-    {
-      label: "Alias",
-      field: "alias",
-      sort: "asc",
-      width: 270,
-    },
-    {
-      label: "Port",
-      field: "port",
-      sort: "asc",
-      width: 200,
-    },
-    {
-      label: "Date Created",
-      field: "status",
-      sort: "asc",
-      width: 100,
-    },
-    {
-      label: "Has Domain Name",
-      field: "has_domain_name",
-      sort: "asc",
-      width: 150,
-    },
-    {
-      label: "Actions",
-      field: "actions",
-      sort: "asc",
-      width: 100,
-    },
-  ],
-  rows: [
-    {
-      name: <Link href="#">Tiger Nixon</Link>,
-      applicatio: "System Architect",
-      descriptio: "Edinburgh",
-      statu: "61",
-      created_by: "2011/04/25",
-      actions: <MoreVertIcon />,
-    }
-  ],
-};
 
 export default function Application() {
   //const navigate = useNavigate();
   const dispatch = useDispatch();
   const store = useSelector((state) => state.applications);
+  const cookies = new Cookies()
+  const [apps, setApps] = React.useState([]);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl); 
+  
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   React.useEffect(() => {
-     dispatch(getApps(1))
-  }, [])
+     dispatch(getOwner(cookies.get('project_data').owner_id))
+     dispatch(appCount())
+     dispatch(getApps(cookies.get('project_data').project_id))
+
+     addApps();
+  }, [store.apps.length, store.app_status, anchorEl])
+
+
+  const appStatus = (id, status) => {
+    dispatch(
+      applicationStatus({
+      id: id,
+      status: status
+     })
+    )
+
+    setAnchorEl(null);
+  };
+
+  const addApps = () => {
+    var apps = [];
+           
+    //alert(store.users.length)
+
+    for (var i = 0; i < store.apps.length; i++) {
+      var app = {};
+      let id = store.apps[i].id;
+
+      app.name = <Link
+       onClick={() => {}}
+       >{store.apps[i].name}</Link>;
+      app.alias = store.apps[i].alias;
+      app.port = store.apps[i].port;
+      app.date_created = store.apps[i].date_created;
+      app.has_custom_domain = store.apps[i].has_custom_domain ? "true" : "false";
+      app.status = store.apps[i].status == 1? <Chip label="active" color="success"/> : store.apps[i].status == 0? <Chip label="inactive" /> : <Chip label="deleted" color="error"/>;
+      app.actions = <>
+      <MoreVertIcon   
+        onClick={handleClick}              
+      />
+      <StyledMenu
+        id="demo-customized-menu"
+        MenuListProps={{
+          'aria-labelledby': 'demo-customized-button',
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={() => appStatus(id, 1)} disableRipple>
+          <RestoreIcon/>
+          Activate
+        </MenuItem>
+        <MenuItem onClick={() => appStatus(id, 0)} disableRipple>
+          <UnpublishedIcon/>
+          Disable
+        </MenuItem>
+        <MenuItem onClick={() => appStatus(id, 5)} disableRipple>
+          <DeleteIcon />
+          Delete
+        </MenuItem>
+      </StyledMenu>
+    </>;
+      
+      //console.log(project)
+
+      apps.push(app);
+    }
+
+    setApps(apps);
+  }
+
+
+  const dat = {
+    columns: [
+      {
+        label: "Name",
+        field: "name",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "Alias",
+        field: "alias",
+        sort: "asc",
+        width: 270,
+      },
+      {
+        label: "Port",
+        field: "port",
+        sort: "asc",
+        width: 200,
+      },
+      {
+        label: "Date Created",
+        field: "date_created",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "Has Custom Domain",
+        field: "has_custom_domain",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "Status",
+        field: "status",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "Actions",
+        field: "actions",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: apps
+  };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -192,22 +324,23 @@ export default function Application() {
                 >
                   <Typography sx={{ fontSize: 15 }}>
                     <b>
-                      <u>Project Alpha</u>
+                      <u>{cookies.get('project_data').name}</u>
                     </b>
                   </Typography>
                   <Typography sx={{ fontSize: 15 }}>
-                    Created By: John Doe
+                    Created By: {store.owner}
                   </Typography>
                   <Typography sx={{ fontSize: 15 }}>
-                    Date Created: June 08 2022
+                    Date Created: {cookies.get('project_data').date_created}
                   </Typography>
                   <Box
                     sx={{
                       display: "flex",
                     }}
                   >
-                    <Typography sx={{ fontSize: 15 }}>
-                      Status: Active
+                    <span sx ={{color: "black"}}>Status:</span>
+                    <Typography sx={{ mt: 0.1, ml: 1, mr: 2, fontSize: 15, color : cookies.get('project_data').status ==1? "green" : cookies.get('project_data').status ==0 ? "gray" : "red"}}>
+                       {cookies.get('project_data').status ==1? "Active" : cookies.get('project_data').status ==0 ? "Inactive" : "Deleted"}
                     </Typography>
                     <Button
                       style={{
@@ -249,11 +382,11 @@ export default function Application() {
                     }}
                   >
                     <Box sx={{ flexGrow: 1, textAlign: "center" }}>
-                      <Typography sx={{ fontSize: 40 }}>26</Typography>
+                      <Typography sx={{ fontSize: 40 }}>{store.active_apps}</Typography>
                       <Typography sx={{ fontSize: 12 }}>Active</Typography>
                     </Box>
                     <Box sx={{ flexGrow: 1, textAlign: "center" }}>
-                      <Typography sx={{ fontSize: 40 }}>35</Typography>
+                      <Typography sx={{ fontSize: 40 }}>{store.inactive_apps}</Typography>
                       <Typography sx={{ fontSize: 12 }}>Disabled</Typography>
                     </Box>
                   </Box>
@@ -372,7 +505,7 @@ export default function Application() {
                 <MDBDataTable striped bordered small data={dat} />
               </CardContent>
             </Card>
-            <Copyright sx={{ pt: 4 }} />
+            <Copyright sx={{ pt: 4, mb: 4, bottom:0, width:"100%", height:60}} />
           </Container>
         </Box>
       </Box>
