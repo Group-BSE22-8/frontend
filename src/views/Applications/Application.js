@@ -312,7 +312,7 @@ export default function Application() {
           <Toolbar />
           <Container sx={{ mt: 2, mb: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={3} md={3} lg={3}>
+              <Grid item xs={12} sm={3} md={3} lg={4}>
                 <Paper
                   sx={{
                     p: 2,
@@ -358,7 +358,7 @@ export default function Application() {
                 </Paper>
               </Grid>
 
-              <Grid item xs={12} sm={3} md={3} lg={2}>
+              <Grid item xs={12} sm={3} md={3} lg={4}>
                 <Paper
                   sx={{
                     p: 2,
@@ -392,7 +392,7 @@ export default function Application() {
                   </Box>
                 </Paper>
               </Grid>
-              <Grid item xs={12} sm={3} md={3} lg={2}>
+              <Grid item xs={12} sm={3} md={3} lg={4}>
                 <Paper
                   sx={{
                     p: 2,
@@ -425,7 +425,7 @@ export default function Application() {
                     </Box>
                   </Box>
                 </Paper>
-              </Grid>
+                  </Grid>
 
               <Grid item xs={12} sm={3} md={3} lg={5}>
                 <Paper

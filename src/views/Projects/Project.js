@@ -3,6 +3,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { styled, alpha } from '@mui/material/styles';
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from '@mui/material/TextField';
 import Card from "@mui/material/Card";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -21,6 +23,7 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import FolderIcon from "@mui/icons-material/Folder";
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 import UnpublishedIcon from '@mui/icons-material/Unpublished';
 import RestoreIcon from '@mui/icons-material/Restore';
 import Menu from '@mui/material/Menu';
@@ -367,6 +370,31 @@ export default function Project() {
                 <FolderIcon sx={{ color: "#fff", marginRight: 2 }} />
               </Box>
               <CardContent>
+              <Box sx={{mb: 2, mt: 2}}>
+            <TextField
+                id="date"
+                label="Start"
+                type="date"
+                defaultValue="2017-05-24"
+                sx={{ width: 220 }}
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <TextField
+                id="date"
+                label="End"
+                type="date"
+                defaultValue="2017-05-24"
+                size="small"
+                sx={{ width: 220, ml: 2, height: 20}}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <Button variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
+              </Box>
                 <MDBDataTable striped bordered small data={data} />
               </CardContent>
             </Card>

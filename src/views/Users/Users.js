@@ -3,6 +3,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { styled, alpha } from '@mui/material/styles';
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from '@mui/material/TextField';
 import Paper from "@mui/material/Paper";
 import TopBar from "../../components/navigation/appbar";
 import SideBar from "../../components/navigation/sidebar";
@@ -16,6 +18,7 @@ import People from "@mui/icons-material/People";
 import Chip from "@mui/material/Chip";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 import UnpublishedIcon from '@mui/icons-material/Unpublished';
 import RestoreIcon from '@mui/icons-material/Restore';
 import "mdbreact/dist/css/mdb.css";
@@ -255,6 +258,32 @@ function Users() {
               </Box>
 
             <CardContent xs={12} component={Paper}>
+            <Box sx={{mb: 2, mt: 2}}>
+            <TextField
+                id="date"
+                label="Start"
+                type="date"
+                defaultValue="2017-05-24"
+                sx={{ width: 220 }}
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <TextField
+                id="date"
+                label="End"
+                type="date"
+                defaultValue="2017-05-24"
+                size="small"
+                sx={{ width: 220, ml: 2, height: 20}}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <Button variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
+              </Box>
+
               <MDBDataTable striped bordered small hover data={data} />
             </CardContent>
           </Card>
