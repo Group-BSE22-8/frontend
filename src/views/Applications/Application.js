@@ -10,6 +10,7 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
+import TextField from '@mui/material/TextField';
 import Chip from "@mui/material/Chip";
 import CardContent from "@mui/material/CardContent";
 import TopBar from "../../components/navigation/appbar";
@@ -24,6 +25,7 @@ import AppsIcon from "@mui/icons-material/Apps";
 import UnpublishedIcon from '@mui/icons-material/Unpublished';
 import RestoreIcon from '@mui/icons-material/Restore';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
@@ -156,6 +158,8 @@ export default function Application() {
   const store = useSelector((state) => state.applications);
   const cookies = new Cookies()
   const [apps, setApps] = React.useState([]);
+  const [start, setStart] = React.useState('');
+  const [end, setEnd] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl); 
   
@@ -167,13 +171,27 @@ export default function Application() {
     setAnchorEl(null);
   };
 
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+
+    if(data.get("date1") && data.get("date2")) {
+      setStart(new Date(data.get("date1")).toLocaleDateString());
+      setEnd(new Date(data.get("date2")).toLocaleDateString());
+    } else {
+      setStart("");
+    }
+  };
+
+
   React.useEffect(() => {
      dispatch(getOwner(cookies.get('project_data').owner_id))
      dispatch(appCount())
      dispatch(getApps(cookies.get('project_data').project_id))
 
      addApps();
-  }, [store.apps.length, store.app_status, anchorEl])
+  }, [store.apps.length, store.app_status, start, end, anchorEl])
 
 
   const appStatus = (id, status) => {
@@ -193,6 +211,11 @@ export default function Application() {
     //alert(store.users.length)
 
     for (var i = 0; i < store.apps.length; i++) {
+      var date = new Date(store.apps[i].date_created).toLocaleDateString()
+      if(!(date >= start && date <= end) && start != '' && end != '') {
+        continue;
+      }
+
       var app = {};
       let id = store.apps[i].id;
 
@@ -483,6 +506,35 @@ export default function Application() {
                 <AppsIcon sx={{ color: "#fff", marginRight: 2 }} />
               </Box>
               <CardContent>
+                <Box 
+                  component="form"
+                  noValidate
+                  onSubmit={handleSubmit}              
+                  sx={{mb: 2, mt: 2}}>
+                  <TextField
+                    name="date1"
+                    label="Start"
+                    type="date"
+                    //defaultValue="2017-05-24"
+                    sx={{ width: 220 }}
+                    size="small"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                  <TextField
+                    name="date2"
+                    label="End"
+                    type="date"
+                    //defaultValue="2017-05-24"
+                    size="small"
+                    sx={{ width: 220, ml: 2, height: 20}}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                  <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
+                </Box>
                 <MDBDataTable striped bordered small data={dat} />
               </CardContent>
             </Card>
@@ -502,6 +554,35 @@ export default function Application() {
                 <LocalActivityIcon sx={{ color: "#fff", marginRight: 2 }} />
               </Box>
               <CardContent>
+                <Box 
+                  component="form"
+                  noValidate
+                  onSubmit={handleSubmit}              
+                  sx={{mb: 2, mt: 2}}>
+                  <TextField
+                    name="date1"
+                    label="Start"
+                    type="date"
+                    //defaultValue="2017-05-24"
+                    sx={{ width: 220 }}
+                    size="small"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                  <TextField
+                    name="date2"
+                    label="End"
+                    type="date"
+                    //defaultValue="2017-05-24"
+                    size="small"
+                    sx={{ width: 220, ml: 2, height: 20}}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                  <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
+                </Box>
                 <MDBDataTable striped bordered small data={dat} />
               </CardContent>
             </Card>

@@ -102,6 +102,8 @@ export default function Project() {
   const cookies = new Cookies()
   const store = useSelector((state) => state.projects);
   const [projects, setProjects] = React.useState([]);
+  const [start, setStart] = React.useState('');
+  const [end, setEnd] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl); 
   
@@ -112,6 +114,20 @@ export default function Project() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+
+    if(data.get("date1") && data.get("date2")) {
+      setStart(new Date(data.get("date1")).toLocaleDateString());
+      setEnd(new Date(data.get("date2")).toLocaleDateString());
+    } else {
+      setStart("");
+    }
+  };
+
 
   const projStatus = (id, status) => {
     dispatch(
@@ -132,7 +148,7 @@ export default function Project() {
      addProjects();
 
 
-  }, [store.projects.length, store.project_status, anchorEl])
+  }, [store.projects.length, store.project_status, start, end, anchorEl])
 
 
   const projectDetails = (name, owner_id, project_id, date_created, status) => {
@@ -152,6 +168,12 @@ export default function Project() {
     var projects = [];
            
     for (var i = 0; i < store.projects.length; i++) {
+
+      var date = new Date(store.projects[i].date_created).toLocaleDateString()
+      if(!(date >= start && date <= end) && start != '' && end != '') {
+        continue;
+      }
+
       var project = {};
 
       let name = store.projects[i].name;
@@ -370,31 +392,35 @@ export default function Project() {
                 <FolderIcon sx={{ color: "#fff", marginRight: 2 }} />
               </Box>
               <CardContent>
-              <Box sx={{mb: 2, mt: 2}}>
-            <TextField
-                id="date"
-                label="Start"
-                type="date"
-                defaultValue="2017-05-24"
-                sx={{ width: 220 }}
-                size="small"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <TextField
-                id="date"
-                label="End"
-                type="date"
-                defaultValue="2017-05-24"
-                size="small"
-                sx={{ width: 220, ml: 2, height: 20}}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <Button variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
-              </Box>
+                <Box 
+                  component="form"
+                  noValidate
+                  onSubmit={handleSubmit}              
+                  sx={{mb: 2, mt: 2}}>
+                  <TextField
+                    name="date1"
+                    label="Start"
+                    type="date"
+                    //defaultValue="2017-05-24"
+                    sx={{ width: 220 }}
+                    size="small"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                  <TextField
+                    name="date2"
+                    label="End"
+                    type="date"
+                    //defaultValue="2017-05-24"
+                    size="small"
+                    sx={{ width: 220, ml: 2, height: 20}}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                  <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
+                </Box>
                 <MDBDataTable striped bordered small data={data} />
               </CardContent>
             </Card>

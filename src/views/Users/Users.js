@@ -98,12 +98,27 @@ function Users() {
   const dispatch = useDispatch();
   const store = useSelector((state) => state.users);
   const [users, setUsers] = React.useState([]);
+  const [start, setStart] = React.useState('');
+  const [end, setEnd] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    if(data.get("date1") && data.get("date2")) {
+      setStart(new Date(data.get("date1")).toLocaleDateString());
+      setEnd(new Date(data.get("date2")).toLocaleDateString());
+    } else {
+      setStart("");
+    }
+  };
+
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -126,13 +141,19 @@ function Users() {
 
     addUsers();
 
-  }, [store.users.length, anchorEl])
+  }, [store.users.length, start, end, anchorEl])
   
 
   const addUsers = () => {
     var users = [];
-           
+
     for (var i = 0; i < store.users.length; i++) {
+
+      var date = new Date(store.users[i].date_created).toLocaleDateString()
+      if(!(date >= start && date <= end) && start != '' && end != '') {
+        continue;
+      }
+ 
       var user = {};
       let id = store.users[i].id;
 
@@ -258,30 +279,34 @@ function Users() {
               </Box>
 
             <CardContent xs={12} component={Paper}>
-            <Box sx={{mb: 2, mt: 2}}>
-            <TextField
-                id="date"
-                label="Start"
-                type="date"
-                defaultValue="2017-05-24"
-                sx={{ width: 220 }}
-                size="small"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <TextField
-                id="date"
-                label="End"
-                type="date"
-                defaultValue="2017-05-24"
-                size="small"
-                sx={{ width: 220, ml: 2, height: 20}}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <Button variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
+              <Box 
+                component="form"
+                noValidate
+                onSubmit={handleSubmit}              
+                sx={{mb: 2, mt: 2}}>
+                <TextField
+                  name="date1"
+                  label="Start"
+                  type="date"
+                  //defaultValue="2017-05-24"
+                  sx={{ width: 220 }}
+                  size="small"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  name="date2"
+                  label="End"
+                  type="date"
+                  //defaultValue="2017-05-24"
+                  size="small"
+                  sx={{ width: 220, ml: 2, height: 20}}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
               </Box>
 
               <MDBDataTable striped bordered small hover data={data} />
