@@ -51,7 +51,6 @@ function TopBar() {
       //navigate("/")
    }
 
-   console.log(document.cookie.indexOf('cookie_data='))
   }, [])
 
   const toggleDrawer = () => {

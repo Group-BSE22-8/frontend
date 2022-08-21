@@ -12,6 +12,11 @@ export const getUsers = createAsyncThunk('appUsers/getUsers', async () => {
   return response.data
 })
   
+export const getLogs = createAsyncThunk('appUsers/getLogs', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/users/user_logs')
+  return response.data
+})
+
 export const userStatus = createAsyncThunk('appUsers/userStatus', async (data) => {
   const response = await axios.patch('http://127.0.0.1:5000/user/status', data )
   return response.data
@@ -21,6 +26,7 @@ export const appUsersSlice = createSlice({
   name: 'appUsers',
   initialState: {
     users: [],
+    user_logs: [],
     user_status: ''
   },
   reducers: {},
@@ -30,8 +36,12 @@ export const appUsersSlice = createSlice({
           //console.log(action.payload)
           state.users = action.payload.data.users
       })
+      .addCase(getLogs.fulfilled, (state, action) => {
+        state.user_logs = action.payload.data.logs
+        //console.log(action.payload)
+      })
       .addCase(userStatus.fulfilled, (state, action) => {
-        state.user_status= action.payload.status
+        state.user_status= Math.random(10, 1000000)
       })
   }
 })

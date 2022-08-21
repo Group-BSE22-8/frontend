@@ -28,6 +28,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import AppMenu from "./Menu";
 
 import { Button } from "@mui/material";
 import {
@@ -41,7 +42,7 @@ import {
 } from "recharts";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getApps, getOwner, applicationStatus, appCount } from "./store";
+import { getApps, getLogs, getOwner, applicationStatus, appCount } from "./store";
 import Cookies from 'universal-cookie'
 
 function Copyright(props) {
@@ -158,6 +159,7 @@ export default function Application() {
   const store = useSelector((state) => state.applications);
   const cookies = new Cookies()
   const [apps, setApps] = React.useState([]);
+  const [logs, setLogs] = React.useState([]);
   const [start, setStart] = React.useState('');
   const [end, setEnd] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -188,10 +190,13 @@ export default function Application() {
   React.useEffect(() => {
      dispatch(getOwner(cookies.get('project_data').owner_id))
      dispatch(appCount())
+     dispatch(getLogs())
      dispatch(getApps(cookies.get('project_data').project_id))
 
      addApps();
-  }, [store.apps.length, store.app_status, start, end, anchorEl])
+     addLogs();
+
+  }, [store.apps.length, store.app_logs.length, store.app_status, start, end, anchorEl])
 
 
   const appStatus = (id, status) => {
@@ -222,38 +227,13 @@ export default function Application() {
       app.name = <Link
        onClick={() => {}}
        >{store.apps[i].name}</Link>;
+      app.id = id;
       app.alias = store.apps[i].alias;
       app.port = store.apps[i].port;
       app.date_created = store.apps[i].date_created;
       app.has_custom_domain = store.apps[i].has_custom_domain ? "true" : "false";
       app.status = store.apps[i].status == 1? <Chip label="active" color="success"/> : store.apps[i].status == 0? <Chip label="inactive" /> : <Chip label="deleted" color="error"/>;
-      app.actions = <>
-      <MoreVertIcon   
-        onClick={handleClick}              
-      />
-      <StyledMenu
-        id="demo-customized-menu"
-        MenuListProps={{
-          'aria-labelledby': 'demo-customized-button',
-        }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={() => appStatus(id, 1)} disableRipple>
-          <RestoreIcon/>
-          Activate
-        </MenuItem>
-        <MenuItem onClick={() => appStatus(id, 0)} disableRipple>
-          <UnpublishedIcon/>
-          Disable
-        </MenuItem>
-        <MenuItem onClick={() => appStatus(id, 5)} disableRipple>
-          <DeleteIcon />
-          Delete
-        </MenuItem>
-      </StyledMenu>
-    </>;
+      app.actions = <AppMenu app = {app}/>;
       
       //console.log(project)
 
@@ -264,7 +244,31 @@ export default function Application() {
   }
 
 
-  const dat = {
+
+  const addLogs = () => {
+    var logs = [];
+           
+    for (var i = 0; i < store.app_logs.length; i++) {
+      var date = new Date(store.app_logs[i].date_created).toLocaleDateString()
+      if(!(date >= start && date <= end) && start != '' && end != '') {
+        continue;
+      }
+
+      var log = {};
+
+      log.performed_by = store.app_logs[i].user;
+      log.app_name = store.app_logs[i].app;
+      log.action = store.app_logs[i].action;
+      log.date_created = store.app_logs[i].date_created;
+      
+      logs.push(log);
+    }
+
+    setLogs(logs);
+  }
+
+
+  const apps_data = {
     columns: [
       {
         label: "Name",
@@ -312,6 +316,36 @@ export default function Application() {
     rows: apps
   };
 
+
+  const app_logs = {
+    columns: [
+      {
+        label: "Performed By",
+        field: "performed_by",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "App Name",
+        field: "app_name",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "Action",
+        field: "action",
+        sort: "asc",
+        width: 270,
+      },
+      {
+        label: "Date Created",
+        field: "date_created",
+        sort: "asc",
+        width: 100,
+      }
+    ],
+    rows: logs
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -535,7 +569,7 @@ export default function Application() {
                   />
                   <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
                 </Box>
-                <MDBDataTable striped bordered small data={dat} />
+                <MDBDataTable striped bordered small data={apps_data} />
               </CardContent>
             </Card>
 
@@ -583,7 +617,7 @@ export default function Application() {
                   />
                   <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
                 </Box>
-                <MDBDataTable striped bordered small data={dat} />
+                <MDBDataTable striped bordered small  data = {app_logs}/>
               </CardContent>
             </Card>
             <Copyright sx={{ pt: 4, mb: 4, bottom:0, width:"100%", height:60}} />

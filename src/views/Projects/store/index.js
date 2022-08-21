@@ -12,6 +12,11 @@ export const getProjects = createAsyncThunk('appProjects/getProjects', async () 
   return response.data
 })
 
+export const getLogs = createAsyncThunk('appProjects/getLogs', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/projects/project_logs')
+  return response.data
+})
+
 export const projectStatus = createAsyncThunk('appProjects/projectStatus', async (data) => {
   const response = await axios.patch('http://127.0.0.1:5000/project/status', data)
   return response.data
@@ -35,6 +40,7 @@ export const appProjectsSlice = createSlice({
   name: 'appProjects',
   initialState: {
     projects: [],
+    project_logs: [],
     project_status: null,
     active_projects: 0,
     inactive_projects: 0,
@@ -48,15 +54,19 @@ export const appProjectsSlice = createSlice({
           state.projects = action.payload.data.projects
           //console.log(action.payload)
       })
+      .addCase(getLogs.fulfilled, (state, action) => {
+        state.project_logs = action.payload.data.logs
+      })
       .addCase(projectStatus.fulfilled, (state, action) => {
           //state.project_status = Math.random(10, 100000);
+          console.log(action.payload)
       })
       .addCase(projectCount.fulfilled, (state, action) => {
         state.active_projects = action.payload.data.active
         state.inactive_projects = action.payload.data.inactive
       })
       .addCase(appCount.fulfilled, (state, action) => {
-        console.log(action.payload)
+        //console.log(action.payload)
         state.active_apps = action.payload.data.active
         state.inactive_apps = action.payload.data.inactive
       })

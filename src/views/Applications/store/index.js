@@ -21,7 +21,12 @@ export const getApps = createAsyncThunk('appApps/getApps', async (id) => {
   const response = await axios.get('http://127.0.0.1:5000/projects/'+id+'/apps' , { headers: {"Authorization" : `Bearer ${cookies.get('cookie_data').token}`} })
   return response.data
 })
-  
+
+export const getLogs = createAsyncThunk('appLogs/getLogs', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/apps/app_logs')
+  return response.data
+})
+
 export const applicationStatus = createAsyncThunk('appApps/applicationStatus', async (data) => {
   const response = await axios.patch('http://127.0.0.1:5000/app/status', data)
   return response.data
@@ -40,6 +45,7 @@ export const appAppsSlice = createSlice({
     owner: '',
     app_status: '',
     apps: [],
+    app_logs: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -49,7 +55,10 @@ export const appAppsSlice = createSlice({
       })
       .addCase(getApps.fulfilled, (state, action) => {
           state.apps = action.payload.data.apps
-          console.log(action.payload.data.apps)
+      })
+      .addCase(getLogs.fulfilled, (state, action) => {
+        state.app_logs = action.payload.data.logs
+        //console.log(action.payload)
       })
       .addCase(getOwner.fulfilled, (state, action) => {
           state.owner = action.payload.data.user.name

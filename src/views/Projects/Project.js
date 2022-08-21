@@ -25,14 +25,15 @@ import FolderIcon from "@mui/icons-material/Folder";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import UnpublishedIcon from '@mui/icons-material/Unpublished';
+import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import RestoreIcon from '@mui/icons-material/Restore';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getProjects, projectStatus, setStatus, projectCount, appCount } from "./store";
+import { getProjects, getLogs, projectStatus, setStatus, projectCount, appCount } from "./store";
 import Cookies from 'universal-cookie'
-
+import ProjectMenu from "./Menu";
 
 function Copyright(props) {
   return (
@@ -102,6 +103,7 @@ export default function Project() {
   const cookies = new Cookies()
   const store = useSelector((state) => state.projects);
   const [projects, setProjects] = React.useState([]);
+  const [logs, setLogs] = React.useState([]);
   const [start, setStart] = React.useState('');
   const [end, setEnd] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -129,11 +131,12 @@ export default function Project() {
   };
 
 
-  const projStatus = (id, status) => {
+  const projStatus = (id, status, user_id) => {
     dispatch(
        projectStatus({
         id: id,
-        status: status
+        status: status,
+        user_id: user_id
        })
     );
 
@@ -143,12 +146,13 @@ export default function Project() {
   React.useEffect(() => {
      dispatch(projectCount())
      dispatch(appCount())
+     dispatch(getLogs())
      dispatch(getProjects())
 
      addProjects();
+     addLogs();
 
-
-  }, [store.projects.length, store.project_status, start, end, anchorEl])
+  }, [store.projects.length, store.project_logs.length, store.project_status, start, end, anchorEl])
 
 
   const projectDetails = (name, owner_id, project_id, date_created, status) => {
@@ -193,42 +197,41 @@ export default function Project() {
           )
        }
        >{store.projects[i].name}</Link>;
+      project.id = id;
       project.description = store.projects[i].description;
       project.organisation = store.projects[i].organisation;
       project.date_created = store.projects[i].date_created;
       project.status = store.projects[i].status == 1? <Chip label="active" color="success"/> : store.projects[i].status == 0? <Chip label="inactive" /> : <Chip label="deleted" color="error"/>;
-      project.actions = <>
-      <MoreVertIcon   
-        onClick={handleClick}              
-      />
-      <StyledMenu
-        id="demo-customized-menu"
-        MenuListProps={{
-          'aria-labelledby': 'demo-customized-button',
-        }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={() => projStatus(id, 1)} disableRipple>
-          <RestoreIcon/>
-          Activate
-        </MenuItem>
-        <MenuItem onClick={() => projStatus(id, 0)} disableRipple>
-          <UnpublishedIcon/>
-          Disable
-        </MenuItem>
-        <MenuItem onClick={() => projStatus(id, 5)} disableRipple>
-          <DeleteIcon />
-          Delete
-        </MenuItem>
-      </StyledMenu>
-    </>;
+      project.actions = <ProjectMenu project = {project}/>;
       
       projects.push(project);
     }
 
     setProjects(projects);
+  }
+
+
+
+  const addLogs = () => {
+    var logs = [];
+           
+    for (var i = 0; i < store.project_logs.length; i++) {
+      var date = new Date(store.project_logs[i].date_created).toLocaleDateString()
+      if(!(date >= start && date <= end) && start != '' && end != '') {
+        continue;
+      }
+
+      var log = {};
+
+      log.performed_by = store.project_logs[i].user;
+      log.project_name = store.project_logs[i].project;
+      log.action = store.project_logs[i].action;
+      log.date_created = store.project_logs[i].date_created;
+      
+      logs.push(log);
+    }
+
+    setLogs(logs);
   }
 
 
@@ -272,6 +275,36 @@ export default function Project() {
       },
     ],
     rows: projects
+  };
+
+  const project_logs = {
+    columns: [
+      {
+        label: "Performed By",
+        field: "performed_by",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "Project Name",
+        field: "project_name",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "Action",
+        field: "action",
+        sort: "asc",
+        width: 270,
+      },
+      {
+        label: "Date Created",
+        field: "date_created",
+        sort: "asc",
+        width: 100,
+      }
+    ],
+    rows: logs
   };
   
   return (
@@ -422,6 +455,54 @@ export default function Project() {
                   <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
                 </Box>
                 <MDBDataTable striped bordered small data={data} />
+              </CardContent>
+            </Card>
+
+            <Card sx={{ marginTop: 3 }}>
+              <Box
+                sx={{
+                  fontSize: 10,
+                  display: "flex",
+                  backgroundColor: "#008ac1",
+                  paddingLeft: 3,
+                }}
+              >
+                <Typography sx={{ flexGrow: 1, fontSize: 17, color: "#fff" }}>
+                  <b>Recent Activity</b>
+                </Typography>
+                <LocalActivityIcon sx={{ color: "#fff", marginRight: 2 }} />
+              </Box>
+              <CardContent>
+                <Box 
+                  component="form"
+                  noValidate
+                  onSubmit={handleSubmit}              
+                  sx={{mb: 2, mt: 2}}>
+                  <TextField
+                    name="date1"
+                    label="Start"
+                    type="date"
+                    //defaultValue="2017-05-24"
+                    sx={{ width: 220 }}
+                    size="small"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                  <TextField
+                    name="date2"
+                    label="End"
+                    type="date"
+                    //defaultValue="2017-05-24"
+                    size="small"
+                    sx={{ width: 220, ml: 2, height: 20}}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                  <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
+                </Box>
+                <MDBDataTable striped bordered small  data = {project_logs}/>
               </CardContent>
             </Card>
             <Copyright sx={{ pt: 4, mb: 4, bottom:0, width:"100%", height:60}} />

@@ -7,6 +7,7 @@ import "bootstrap-css-only/css/bootstrap.min.css";
 import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 
 const data1 = {
   columns: [
@@ -111,6 +112,20 @@ export default function Table() {
       </Typography>
       <LocalActivityIcon sx={{ color: "#fff", marginRight: 2 }} /> */}
       <CardContent xs={12} component={Paper}>
+        <Box
+          sx={{
+            fontSize: 10,
+            display: "flex",
+            backgroundColor: "#008ac1",
+            paddingLeft: 3,
+          }}
+        >
+          <Typography sx={{ flexGrow: 1, fontSize: 17, color: "#fff" }}>
+            <b>Recent Activity</b>
+          </Typography>
+          <LocalActivityIcon sx={{ color: "#fff", marginRight: 2 }} />
+        </Box>
+
         <MDBDataTable striped bordered small hover data={data1} />
       </CardContent>
     </>
