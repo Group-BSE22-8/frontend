@@ -32,16 +32,13 @@ export const appCount = createAsyncThunk('appProjects/appCount', async () => {
   return response.data
 })
 
-export const setStatus = createAsyncThunk('appProjects/setStatus', async () => {
-  return {status: ''}
-})
 
 export const appProjectsSlice = createSlice({
   name: 'appProjects',
   initialState: {
     projects: [],
     project_logs: [],
-    project_status: null,
+    project_status: 0,
     active_projects: 0,
     inactive_projects: 0,
     active_apps: 0,
@@ -58,8 +55,7 @@ export const appProjectsSlice = createSlice({
         state.project_logs = action.payload.data.logs
       })
       .addCase(projectStatus.fulfilled, (state, action) => {
-          //state.project_status = Math.random(10, 100000);
-          console.log(action.payload)
+          state.project_status = state.project_status + 1;
       })
       .addCase(projectCount.fulfilled, (state, action) => {
         state.active_projects = action.payload.data.active
@@ -70,9 +66,6 @@ export const appProjectsSlice = createSlice({
         state.active_apps = action.payload.data.active
         state.inactive_apps = action.payload.data.inactive
       })
-      .addCase(setStatus.fulfilled, (state, action) => {
-        state.project_status = Math.random();
-    })
   }
 })
 

@@ -27,7 +27,7 @@ export const appUsersSlice = createSlice({
   initialState: {
     users: [],
     user_logs: [],
-    user_status: ''
+    user_status: 0
   },
   reducers: {},
   extraReducers: builder => {
@@ -41,7 +41,7 @@ export const appUsersSlice = createSlice({
         //console.log(action.payload)
       })
       .addCase(userStatus.fulfilled, (state, action) => {
-        state.user_status= Math.random(10, 1000000)
+        state.user_status = state.user_status + 1 
       })
   }
 })

@@ -43,7 +43,7 @@ export const appAppsSlice = createSlice({
   initialState: {
     projects: 0,
     owner: '',
-    app_status: '',
+    app_status: 0,
     apps: [],
     app_logs: []
   },
@@ -64,7 +64,7 @@ export const appAppsSlice = createSlice({
           state.owner = action.payload.data.user.name
       })
       .addCase(applicationStatus.fulfilled, (state, action) => {
-          state.app_status = action.payload.status;
+          state.app_status = state.app_status + 1;
       })
       .addCase(appCount.fulfilled, (state, action) => {
         console.log(action.payload)

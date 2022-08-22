@@ -125,6 +125,7 @@ function Users() {
     if(data.get("date1") && data.get("date2")) {
       setStart(new Date(data.get("date1")).toLocaleDateString());
       setEnd(new Date(data.get("date2")).toLocaleDateString());
+
     } else {
       setStart("");
     }
@@ -132,7 +133,7 @@ function Users() {
 
 
   const updateStatus = () => {
-    setStatus(Math.random(10, 1000000))
+    setStatus(status + 1)
   };
 
   
@@ -143,7 +144,7 @@ function Users() {
     addUsers();
     addLogs();
 
-  }, [store.users.length, store.user_logs.length, status, start, end])
+  }, [store.users.length, store.user_status, store.user_logs.length, status, start, end])
   
 
   const addUsers = () => {
@@ -177,7 +178,7 @@ function Users() {
            
     for (var i = 0; i < store.user_logs.length; i++) {
       var date = new Date(store.user_logs[i].date_created).toLocaleDateString()
-      if(!(date >= start && date <= end) && start != '' && end != '') {
+      if (!(date >= start && date <= end) && start != '' && end != '') {
         continue;
       }
 
