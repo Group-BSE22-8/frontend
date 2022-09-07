@@ -5,10 +5,18 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 export const adminLogin = createAsyncThunk('appAuth/adminLogin', async (data) => {
-  const response = await axios.post('http://127.0.0.1:5000/users/admin_login', data )
-  return response.data
+  try {
+    const response = await axios.post('http://127.0.0.1:5000/users/admin_login', data )
+    return response.data
+  
+  } catch(err){
+    return err.response.data
+  }
 })
 
+export const setStatus = createAsyncThunk('appAuth/setStatus', () => {
+    return 'reset'
+})
 
 export const appAuthSlice = createSlice({
   name: 'appAuth',
@@ -24,11 +32,17 @@ export const appAuthSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(adminLogin.fulfilled, (state, action) => {
-          state.status = action.payload.status
-          state.cookie_data.token = action.payload.data.access_token
-          state.cookie_data.username = action.payload.data.username
-          state.cookie_data.id = action.payload.data.id
-          console.log(action.payload.status)
+          if (action.payload.status && action.payload.status == "success") {
+            state.status = action.payload.status
+            state.cookie_data.token = action.payload.data.access_token
+            state.cookie_data.username = action.payload.data.username
+            state.cookie_data.id = action.payload.data.id
+          } else {
+            state.status = action.payload.status
+          }
+      })
+      .addCase(setStatus.fulfilled, (state, action) => {
+        state.status = ''
       })
   }
 })

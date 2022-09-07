@@ -38,7 +38,10 @@ import users from "../images/users.png";
 import resource from "../images/resource.png";
 import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { userCount, clusterCount, projectCount, appCount } from "./store";
+import Cookies from 'universal-cookie'
 
 function Copyright(props) {
   return (
@@ -158,6 +161,17 @@ const dat = {
 
 function DashboardContent() {
   const store = useSelector((state) => state.dashboard);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const cookies = new Cookies()
+
+  React.useEffect(() => {
+    dispatch(userCount())
+    dispatch(appCount())
+    dispatch(projectCount())
+    dispatch(clusterCount())
+
+  }, [])
 
   return (
     <ThemeProvider theme={theme}>
@@ -284,7 +298,7 @@ function DashboardContent() {
                       variant="square"
                       sx={{ width: 60, height: 60 }}
                       alt="applications"
-                      src={application}
+                      src={application} 
                     />
                   </Stack>
 
@@ -380,7 +394,7 @@ function DashboardContent() {
                     }}
                   >
                     <Typography sx={{ fontSize: 18, marginRight: 1 }}>
-                      Resources:{" "}
+                      Databases:{" "}
                     </Typography>
                     <Typography sx={{ fontSize: 18 }}>56</Typography>
                   </Box>

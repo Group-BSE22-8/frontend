@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import Modal from '@mui/material/Modal';
 import Link from "@mui/material/Link";
 import TextField from '@mui/material/TextField';
 import Chip from "@mui/material/Chip";
@@ -42,7 +43,7 @@ import {
 } from "recharts";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getApps, getLogs, getOwner, applicationStatus, appCount } from "./store";
+import { getApps, getLogs, getOwner, applicationStatus, appCount, getProjectActivity, disableProject } from "./store";
 import Cookies from 'universal-cookie'
 
 function Copyright(props) {
@@ -63,7 +64,24 @@ function Copyright(props) {
   );
 }
 
+const date = new Date();
+const month = parseInt(date.getMonth() + 1) < 10 ? "-0" + parseInt(date.getMonth() + 1) : "-" + parseInt(date.getMonth() + 1);
+const day = date.getDate()  < 10 ? "-0" + date.getDate()  : "-" + date.getDate();
+const today = date.getFullYear() + month + day;
+
 const theme = createTheme();
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -160,29 +178,61 @@ export default function Application() {
   const cookies = new Cookies()
   const [apps, setApps] = React.useState([]);
   const [logs, setLogs] = React.useState([]);
-  const [start, setStart] = React.useState('');
-  const [end, setEnd] = React.useState('');
+  const [log_start, setLogStart] = React.useState('');
+  const [log_end, setLogEnd] = React.useState('');
+  const [app_start, setAppStart] = React.useState('');
+  const [app_end, setAppEnd] = React.useState('');
+  const [comment, setComment] = React.useState('');
+  const [open_disable, setDisOpen] = React.useState(false);
+  const [app_min_date, setAppMinDate] = React.useState('');
+  const [log_min_date, setLogMinDate] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl); 
   
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+
+  const setAppDate = (event) => {
+    setAppMinDate(event.target.value)
+  };
+  
+  const setLogDate = (event) => {
+    setLogMinDate(event.target.value)
   };
 
-  const handleClose = () => {
+
+  const handleModalClose = () => {
+    setDisOpen(false);
     setAnchorEl(null);
+  }
+
+
+  const handleModalOpen = () => {
+      setDisOpen(true);
   };
 
+  const setsComment = (event) => {
+    setComment(event.target.value)
+  };
+
+  const onKeyDown = (e) => {
+    e.stopPropagation();
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    if(data.get("date1") && data.get("date2")) {
-      setStart(new Date(data.get("date1")).toLocaleDateString());
-      setEnd(new Date(data.get("date2")).toLocaleDateString());
+    if (data.get("date1") && data.get("date2")) {
+      setAppStart(new Date(data.get("date1")).toLocaleDateString());
+      setAppEnd(new Date(data.get("date2")).toLocaleDateString());
+
+    } else if (data.get("date3") && data.get("date4")) {
+      setLogStart(new Date(data.get("date3")).toLocaleDateString());
+      setLogEnd(new Date(data.get("date4")).toLocaleDateString());
+
     } else {
-      setStart("");
+      setLogStart("");
+      setAppStart("");
+
     }
   };
 
@@ -192,32 +242,45 @@ export default function Application() {
      dispatch(appCount())
      dispatch(getLogs())
      dispatch(getApps(cookies.get('project_data').project_id))
+     dispatch(getProjectActivity(
+      cookies.get('project_data').project_id, 
+      {
+        start: 0,
+        end: 0,
+        step: '1h'
+      }
+     ))
 
      addApps();
      addLogs();
 
-  }, [store.apps.length, store.app_logs.length, store.app_status, start, end, anchorEl])
+  }, [store.apps.length, store.app_logs.length, store.app_status, app_start, app_end, log_start, log_end, anchorEl])
 
 
-  const appStatus = (id, status) => {
+  const projectStatus = (id, status) => {
+    if (comment != "") {
     dispatch(
-      applicationStatus({
-      id: id,
-      status: status
+      disableProject({
+        id: id,
+        status: status,
+        comment: comment,
+        user_id: cookies.get('cookie_data').id
      })
     )
 
     setAnchorEl(null);
+
+    } else {
+      alert("Invalid comment.")
+    }
   };
 
   const addApps = () => {
     var apps = [];
            
-    //alert(store.users.length)
-
     for (var i = 0; i < store.apps.length; i++) {
       var date = new Date(store.apps[i].date_created).toLocaleDateString()
-      if(!(date >= start && date <= end) && start != '' && end != '') {
+      if(!(date >= app_start && date <= app_end) && app_start != '' && app_end != '') {
         continue;
       }
 
@@ -250,7 +313,7 @@ export default function Application() {
            
     for (var i = 0; i < store.app_logs.length; i++) {
       var date = new Date(store.app_logs[i].date_created).toLocaleDateString()
-      if(!(date >= start && date <= end) && start != '' && end != '') {
+      if(!(date >= log_start && date <= log_end) && log_start != '' && log_end != '') {
         continue;
       }
 
@@ -259,6 +322,7 @@ export default function Application() {
       log.performed_by = store.app_logs[i].user;
       log.app_name = store.app_logs[i].app;
       log.action = store.app_logs[i].action;
+      log.comment = store.app_logs[i].comment;
       log.date_created = store.app_logs[i].date_created;
       
       logs.push(log);
@@ -338,6 +402,12 @@ export default function Application() {
         width: 270,
       },
       {
+        label: "Comment",
+        field: "comment",
+        sort: "asc",
+        width: 270,
+      },
+      {
         label: "Date Created",
         field: "date_created",
         sort: "asc",
@@ -408,10 +478,44 @@ export default function Application() {
                         outline: "none",
                       }}
                       sx={{ border: 1, borderRadius: 2 }}
+                      onClick={() => handleModalOpen()}
                     >
                       Disable
                     </Button>
                   </Box>
+
+                  <Modal
+                    open={open_disable}
+                    onClose={() => handleModalClose("disable")}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={style}>
+                      <Typography id="modal-modal-title" variant="h6" component="h2">
+                      Disable project.
+                      </Typography>
+                      <hr/>
+                      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        Are you sure you want to disable this project?
+                      </Typography>
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Enter comment"
+                        name="comment"
+                        autoFocus
+                        onChange={setsComment}
+                        onKeyDown = {onKeyDown}
+                      />
+                      <Button variant = "outlined" sx={{mt:4}} onClick = {() => handleModalClose("disable")}>No</Button>
+                      <Button variant = "outlined" sx={{mt:4, ml: 4}}
+                        onClick = {() => {
+                          projectStatus(cookies.get('project_data').project_id, 0)
+                          handleModalClose("disable")
+                        }}>Yes</Button>
+                    </Box>
+                  </Modal>
                 </Paper>
               </Grid>
 
@@ -484,7 +588,7 @@ export default function Application() {
                 </Paper>
                   </Grid>
 
-              <Grid item xs={12} sm={3} md={3} lg={5}>
+              <Grid item xs={12} sm={3} md={3} lg={4}>
                 <Paper
                   sx={{
                     p: 2,
@@ -550,21 +654,32 @@ export default function Application() {
                     label="Start"
                     type="date"
                     //defaultValue="2017-05-24"
+                    onChange={setAppDate}
                     sx={{ width: 220 }}
                     size="small"
                     InputLabelProps={{
                       shrink: true,
                     }}
+
+                    inputProps={{
+                      max: today
+                    }}  
                   />
                   <TextField
                     name="date2"
                     label="End"
                     type="date"
                     //defaultValue="2017-05-24"
+                    disabled = {app_min_date ? false : true}
                     size="small"
                     sx={{ width: 220, ml: 2, height: 20}}
                     InputLabelProps={{
                       shrink: true,
+                    }}
+
+                    inputProps={{
+                      min: app_min_date,
+                      max: today
                     }}
                   />
                   <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
@@ -594,25 +709,36 @@ export default function Application() {
                   onSubmit={handleSubmit}              
                   sx={{mb: 2, mt: 2}}>
                   <TextField
-                    name="date1"
+                    name="date3"
                     label="Start"
                     type="date"
                     //defaultValue="2017-05-24"
+                    onChange={setLogDate}
                     sx={{ width: 220 }}
                     size="small"
                     InputLabelProps={{
                       shrink: true,
                     }}
+
+                    inputProps={{
+                      max: today
+                    }}
                   />
                   <TextField
-                    name="date2"
+                    name="date4"
                     label="End"
                     type="date"
                     //defaultValue="2017-05-24"
+                    disabled = {log_min_date ? false : true}
                     size="small"
                     sx={{ width: 220, ml: 2, height: 20}}
                     InputLabelProps={{
                       shrink: true,
+                    }}
+
+                    inputProps={{
+                      min: log_min_date,
+                      max: today
                     }}
                   />
                   <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>

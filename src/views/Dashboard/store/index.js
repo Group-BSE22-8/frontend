@@ -4,21 +4,26 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 //Axios Imports
 import axios from 'axios'
 
-export const getClusters = createAsyncThunk('appDash/getClusters', async (data) => {
-  const response = await axios.get('http://127.0.0.1:5000/clusters', data )
+export const clusterCount = createAsyncThunk('appDash/clusterCount', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/clusters/count')
   return response.data
 })
 
-export const getProjects = createAsyncThunk('appDash/getProjects', async (data) => {
-  const response = await axios.get('http://127.0.0.1:5000/projects', data )
+export const userCount = createAsyncThunk('appDash/userCount', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/users/count')
   return response.data
 })
 
-export const getApps = createAsyncThunk('appDash/getApps', async (data) => {
-  const response = await axios.get('http://127.0.0.1:5000/applications', data )
+export const projectCount = createAsyncThunk('appDash/projectCount', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/projects/count')
   return response.data
 })
-  
+
+
+export const appCount = createAsyncThunk('appDash/appCount', async () => {
+  const response = await axios.get('http://127.0.0.1:5000/apps/count')
+  return response.data
+})
 
 export const appDashSlice = createSlice({
   name: 'appDash',
@@ -31,14 +36,17 @@ export const appDashSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(getClusters.fulfilled, (state, action) => {
-          console.log(action.payload)
+      .addCase(clusterCount.fulfilled, (state, action) => {
+          state.clusters = action.payload.data.count 
       })
-      .addCase(getProjects.fulfilled, (state, action) => {
-          console.log(action.payload)
+      .addCase(userCount.fulfilled, (state, action) => {
+          state.users = action.payload.data.active + action.payload.data.inactive
       })
-      .addCase(getApps.fulfilled, (state, action) => {
-          console.log(action.payload)
+      .addCase(projectCount.fulfilled, (state, action) => {
+          state.projects = action.payload.data.active + action.payload.data.inactive 
+      })
+      .addCase(appCount.fulfilled, (state, action) => {
+          state.applications = action.payload.data.active + action.payload.data.inactive
       })
   }
 })

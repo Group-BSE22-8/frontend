@@ -53,6 +53,11 @@ function Copyright(props) {
   );
 }
 
+const date = new Date();
+const month = parseInt(date.getMonth() + 1) < 10 ? "-0" + parseInt(date.getMonth() + 1) : "-" + parseInt(date.getMonth() + 1);
+const day = date.getDate()  < 10 ? "-0" + date.getDate()  : "-" + date.getDate();
+const today = date.getFullYear() + month + day;
+
 const theme = createTheme();
 
 const StyledMenu = styled((props) => (
@@ -104,17 +109,21 @@ export default function Project() {
   const store = useSelector((state) => state.projects);
   const [projects, setProjects] = React.useState([]);
   const [logs, setLogs] = React.useState([]);
-  const [start, setStart] = React.useState('');
-  const [end, setEnd] = React.useState('');
+  const [log_start, setLogStart] = React.useState('');
+  const [log_end, setLogEnd] = React.useState('');
+  const [project_start, setProjectStart] = React.useState('');
+  const [project_end, setProjectEnd] = React.useState('');
+  const [project_min_date, setProjectMinDate] = React.useState('');
+  const [log_min_date, setLogMinDate] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl); 
   
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const setProjectDate = (event) => {
+    setProjectMinDate(event.target.value)
   };
-
-  const handleClose = () => {
-    setAnchorEl(null);
+  
+  const setLogDate = (event) => {
+    setLogMinDate(event.target.value)
   };
 
 
@@ -122,26 +131,21 @@ export default function Project() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    if(data.get("date1") && data.get("date2")) {
-      setStart(new Date(data.get("date1")).toLocaleDateString());
-      setEnd(new Date(data.get("date2")).toLocaleDateString());
+    if (data.get("date1") && data.get("date2")) {
+      setProjectStart(new Date(data.get("date1")).toLocaleDateString());
+      setProjectEnd(new Date(data.get("date2")).toLocaleDateString());
+
+    } else if (data.get("date3") && data.get("date4")) {
+      setLogStart(new Date(data.get("date3")).toLocaleDateString());
+      setLogEnd(new Date(data.get("date4")).toLocaleDateString());
+
     } else {
-      setStart("");
+      setLogStart("");
+      setProjectStart("");
+
     }
   };
 
-
-  const projStatus = (id, status, user_id) => {
-    dispatch(
-       projectStatus({
-        id: id,
-        status: status,
-        user_id: user_id
-       })
-    );
-
-    setAnchorEl(null);
-  };
 
   React.useEffect(() => {
      dispatch(projectCount())
@@ -152,9 +156,10 @@ export default function Project() {
      addProjects();
      addLogs();
 
-  }, [store.projects.length, store.project_logs.length, store.project_status, start, end, anchorEl])
+  }, [store.projects.length, store.project_logs.length, store.project_status, project_start, project_end, log_start, log_end, anchorEl])
 
 
+  
   const projectDetails = (name, owner_id, project_id, date_created, status) => {
       var project_data = {
         project_id: project_id,
@@ -168,13 +173,14 @@ export default function Project() {
       navigate("/applications")
   }
 
+
   const addProjects = () => {
     var projects = [];
            
     for (var i = 0; i < store.projects.length; i++) {
 
       var date = new Date(store.projects[i].date_created).toLocaleDateString()
-      if(!(date >= start && date <= end) && start != '' && end != '') {
+      if(!(date >= project_start && date <= project_end) && project_start != '' && project_end != '') {
         continue;
       }
 
@@ -211,13 +217,12 @@ export default function Project() {
   }
 
 
-
   const addLogs = () => {
     var logs = [];
            
     for (var i = 0; i < store.project_logs.length; i++) {
       var date = new Date(store.project_logs[i].date_created).toLocaleDateString()
-      if(!(date >= start && date <= end) && start != '' && end != '') {
+      if(!(date >= log_start && date <= log_end) && log_start != '' && log_end != '') {
         continue;
       }
 
@@ -226,6 +231,7 @@ export default function Project() {
       log.performed_by = store.project_logs[i].user;
       log.project_name = store.project_logs[i].project;
       log.action = store.project_logs[i].action;
+      log.comment = store.project_logs[i].comment;
       log.date_created = store.project_logs[i].date_created;
       
       logs.push(log);
@@ -294,6 +300,12 @@ export default function Project() {
       {
         label: "Action",
         field: "action",
+        sort: "asc",
+        width: 270,
+      },
+      {
+        label: "Comment",
+        field: "comment",
         sort: "asc",
         width: 270,
       },
@@ -435,22 +447,33 @@ export default function Project() {
                     label="Start"
                     type="date"
                     //defaultValue="2017-05-24"
+                    onChange={setProjectDate}
                     sx={{ width: 220 }}
                     size="small"
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    inputProps={{
+                      max: today
+                    }}  
                   />
                   <TextField
                     name="date2"
                     label="End"
                     type="date"
                     //defaultValue="2017-05-24"
+                    disabled = {project_min_date ? false : true}
                     size="small"
                     sx={{ width: 220, ml: 2, height: 20}}
                     InputLabelProps={{
                       shrink: true,
                     }}
+
+                    inputProps={{
+                      min: project_min_date,
+                      max: today
+                    }}
+  
                   />
                   <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
                 </Box>
@@ -479,25 +502,36 @@ export default function Project() {
                   onSubmit={handleSubmit}              
                   sx={{mb: 2, mt: 2}}>
                   <TextField
-                    name="date1"
+                    name="date3"
                     label="Start"
                     type="date"
                     //defaultValue="2017-05-24"
+                    onChange={setLogDate}
                     sx={{ width: 220 }}
                     size="small"
                     InputLabelProps={{
                       shrink: true,
                     }}
+
+                    inputProps={{
+                      max: today
+                    }}
                   />
                   <TextField
-                    name="date2"
+                    name="date4"
                     label="End"
                     type="date"
                     //defaultValue="2017-05-24"
+                    disabled = {log_min_date ? false : true}
                     size="small"
                     sx={{ width: 220, ml: 2, height: 20}}
                     InputLabelProps={{
                       shrink: true,
+                    }}
+
+                    inputProps={{
+                      min: log_min_date,
+                      max: today
                     }}
                   />
                   <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>

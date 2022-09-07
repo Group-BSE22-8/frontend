@@ -37,7 +37,7 @@ export const appUsersSlice = createSlice({
           state.users = action.payload.data.users
       })
       .addCase(getLogs.fulfilled, (state, action) => {
-        state.user_logs = action.payload.data.logs
+        state.user_logs = action.payload.data.logs.reverse()
         //console.log(action.payload)
       })
       .addCase(userStatus.fulfilled, (state, action) => {

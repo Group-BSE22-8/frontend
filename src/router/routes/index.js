@@ -5,7 +5,7 @@ const Login = lazy(() => import("../../views/Auth/Login"));
 const Dashboard = lazy(() => import("../../views/Dashboard/Dashboard"));
 const Projects = lazy(() => import("../../views/Projects/Project"));
 const Applications = lazy(() => import("../../views/Applications/Application"));
-const Infrastructure = lazy(() =>import("../../views/Infrastracture/Infrastructure"));
+const Infrastructure = lazy(() =>import("../../views/Infrastructure/Infrastructure"));
 const Users = lazy(() => import("../../views/Users/Users"));
 const Routes = [
   {

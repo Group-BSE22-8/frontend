@@ -55,7 +55,7 @@ export default function CustomizedMenu(props) {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -64,7 +64,7 @@ export default function CustomizedMenu(props) {
   };
 
   const logout = () => {
-    //cookies.remove('cookie_data')
+    cookies.remove('cookie_data', { path: '/' })
     navigate("/")
   };
 

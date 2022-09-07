@@ -17,8 +17,13 @@ export const getOwner = createAsyncThunk('appApps/getOwner', async (id) => {
   return response.data
 })
 
-export const getApps = createAsyncThunk('appApps/getApps', async (id) => {
+export const getApps = createAsyncThunk('appApps/getProjectActivity', async (id) => {
   const response = await axios.get('http://127.0.0.1:5000/projects/'+id+'/apps' , { headers: {"Authorization" : `Bearer ${cookies.get('cookie_data').token}`} })
+  return response.data
+})
+
+export const getProjectActivity = createAsyncThunk('appApps/getApps', async (id, data) => {
+  const response = await axios.post('http://127.0.0.1:5000/projects/'+id+'/metrics/network' , data, { headers: {"Authorization" : `Bearer ${cookies.get('cookie_data').token}`} })
   return response.data
 })
 
@@ -32,6 +37,11 @@ export const applicationStatus = createAsyncThunk('appApps/applicationStatus', a
   return response.data
 })
 
+export const disableProject = createAsyncThunk('appApps/disableProject', async (data) => {
+  const response = await axios.patch('http://127.0.0.1:5000/project/status', data)
+  return response.data
+})
+
 export const appCount = createAsyncThunk('appProjects/appCount', async () => {
   const response = await axios.get('http://127.0.0.1:5000/apps/count')
   return response.data
@@ -41,7 +51,7 @@ export const appCount = createAsyncThunk('appProjects/appCount', async () => {
 export const appAppsSlice = createSlice({
   name: 'appApps',
   initialState: {
-    projects: 0,
+    project: [],
     owner: '',
     app_status: 0,
     apps: [],
@@ -51,13 +61,17 @@ export const appAppsSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getProject.fulfilled, (state, action) => {
-          state.projects = action.payload
+          state.project = action.payload.data.project
       })
       .addCase(getApps.fulfilled, (state, action) => {
           state.apps = action.payload.data.apps
       })
+      .addCase(getProjectActivity.fulfilled, (state, action) => {
+        //state.apps = action.payload.data.apps
+        console.log(action.payload)
+      })
       .addCase(getLogs.fulfilled, (state, action) => {
-        state.app_logs = action.payload.data.logs
+        state.app_logs = action.payload.data.logs.reverse()
         //console.log(action.payload)
       })
       .addCase(getOwner.fulfilled, (state, action) => {
@@ -65,9 +79,14 @@ export const appAppsSlice = createSlice({
       })
       .addCase(applicationStatus.fulfilled, (state, action) => {
           state.app_status = state.app_status + 1;
+          //console.log(action.payload)
+      })
+      .addCase(disableProject.fulfilled, (state, action) => {
+        state.app_status = state.app_status + 1;
+        console.log(action.payload)
       })
       .addCase(appCount.fulfilled, (state, action) => {
-        console.log(action.payload)
+        //console.log(action.payload)
         state.active_apps = action.payload.data.active
         state.inactive_apps = action.payload.data.inactive
       })

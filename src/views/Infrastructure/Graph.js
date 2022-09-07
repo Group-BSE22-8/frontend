@@ -16,11 +16,6 @@ import {
 
 function Graph(props) {
   return (
-    // <Chart height={160} width={200} data={props.data}>
-    //   <ArgumentAxis showLabels={false} />
-    //   <Title text={props.title} size={12} />
-    //   <SplineSeries valueField="value" argumentField="argument" />
-    // </Chart>
     <>
       <ResponsiveContainer width="100%" height="80%">
         <LineChart
@@ -28,15 +23,15 @@ function Graph(props) {
           height={350}
           data={props.data}
           margin={{
-            top: 10,
+            top: 20,
             right: 10,
-            left: 0,
+            left: 15,
             bottom: 5,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
+          <XAxis dataKey="name" label={{ value: props.xaxis}} tick={false}/>
+          <YAxis dataKey="value" sx={{mt: 20}} tickCount={1} label={{ value: props.yaxis, angle: -90, position: 'insideBottomLeft' }}/>
           <Tooltip />
           <Line
             type="monotone"

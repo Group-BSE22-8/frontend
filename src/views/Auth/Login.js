@@ -21,9 +21,10 @@ import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
 import Alert from '@mui/material/Alert';
 import FormControl from "@mui/material/FormControl";
+import CircularProgress from '@mui/material/CircularProgress';
 import Cookies from 'universal-cookie'
 import img from "../images/cc.jpg";
-import { adminLogin } from "./store";
+import { adminLogin, setStatus } from "./store";
 
 function Copyright(props) {
   return (
@@ -50,18 +51,22 @@ export default function SignIn() {
   const dispatch = useDispatch();
   const cookies = new Cookies()
   const store = useSelector((state) => state.auth);
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     if (store.status === 'success') {
-      cookies.set('cookie_data', store.cookie_data, { path: '/' })
+      dispatch(setStatus())
+      cookies.set('cookie_data', store.cookie_data, { path: '/' })      
       navigate("/dashboard");
+      setLoading(false)
 
     } else if (store.status === 'fail') {
       setValues({
         ...values,
         visibility: true,
         text: "Wrong email or password." 
-      });    
+      });   
+      setLoading(false) 
     }
 
   }, [store.status])
@@ -93,6 +98,7 @@ export default function SignIn() {
     const data = new FormData(event.currentTarget);
     
     if (data.get("email") && data.get("password")) {
+      setLoading(true)
       dispatch(
         adminLogin({
           email: data.get("email"),
@@ -100,6 +106,9 @@ export default function SignIn() {
         })
       );
 
+      if(store.status == "fail") {
+        setLoading(false)
+      }
     } else {
       setValues({
         ...values,
@@ -214,13 +223,14 @@ export default function SignIn() {
                 />
               </FormControl>
 
-              <FormControlLabel
+              {/*<FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
-              />
+                />*/}
               <Button
                 type="submit"
                 fullWidth
+                disabled={loading == true ? true : false}
                 variant="contained"
                 sx={{
                   mt: 3,
@@ -231,7 +241,8 @@ export default function SignIn() {
                   },
                 }}
               >
-                Sign In
+                {loading == true ? <CircularProgress size={20} sx = {{color: "#008ac1"}}/> : 
+                "Sign In" }
               </Button>
               <Copyright sx={{ mt: 5 }} />
             </Box>

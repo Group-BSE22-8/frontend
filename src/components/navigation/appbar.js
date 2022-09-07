@@ -14,6 +14,7 @@ import { adjustDrawer } from './store';
 import CustomizedMenu from './menu';
 import Cookies from 'universal-cookie'
 import { useNavigate } from "react-router-dom";
+import { AlignVerticalBottomOutlined } from '@mui/icons-material';
 
 const drawerWidth = 200;
 
@@ -47,11 +48,10 @@ function TopBar() {
 
   //** ComponentDidMount
   React.useEffect(() => {
-   if (document.cookie.indexOf('cookie_data=')) {
-      //navigate("/")
-   }
-
-  }, [])
+     if (!cookies.get('cookie_data')) {
+       navigate("/")
+     }
+  })
 
   const toggleDrawer = () => {
     dispatch(adjustDrawer({open: true}));
@@ -89,7 +89,7 @@ function TopBar() {
             >
               Crane Cloud
             </Typography>
-            <CustomizedMenu/>
+            {cookies.get('cookie_data') ? <CustomizedMenu/> : " "}
           </Toolbar>
         </AppBar>
       </Box>

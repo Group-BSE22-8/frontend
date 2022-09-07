@@ -3,6 +3,7 @@ import { styled, alpha } from '@mui/material/styles';
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UnpublishedIcon from '@mui/icons-material/Unpublished';
@@ -78,33 +79,85 @@ function UserMenu(props) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const cookies = new Cookies()
-    const [open_m, setOpen] = React.useState(false);
+    const [open_more, setMoreOpen] = React.useState(false);
+    const [open_activate, setActOpen] = React.useState(false);
+    const [open_disable, setDisOpen] = React.useState(false);
+    const [open_delete, setDelOpen] = React.useState(false);
+    const [comment, setComment] = React.useState("");
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl); 
   
-    const handleMClose = () => {
-        setOpen(false)
-        setAnchorEl(null);
-      }
+    React.useEffect(() => {
       
-      const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-      };
-    
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false)
-  
-    const usersStatus = (id, status) => {
-      dispatch(
-         userStatus({
-          id: id,
-          status: status,
-          user_id: cookies.get('cookie_data').id
-         })
-      );
-  
+    }, [anchorEl])
+ 
+    const handleModalClose = (name) => {      
+      if (name == "activate") {
+        setActOpen(false);
+        
+      } else if (name == "disable") {
+        setDisOpen(false);
+
+      } else if(name == "delete") {
+        setDelOpen(false);
+
+      } else if(name == "more") {
+        setMoreOpen(false);
+      }
+
       setAnchorEl(null);
-      props.updateStatus();
+    }
+    
+
+    const handleModalOpen = (name) => {
+      if (name == "activate") {
+        setActOpen(true);
+
+      } else if (name == "disable") {
+        setDisOpen(true);
+
+      } else if(name == "delete") {
+        setDelOpen(true);
+
+      } else if(name == "more") {
+        setMoreOpen(true);
+      }
+
+    };
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    }
+  
+    const setsComment = (event) => {
+      setComment(event.target.value)
+    };
+  
+    const onKeyDown = (e) => {
+      e.stopPropagation();
+    }
+
+    const usersStatus = (id, status) => {
+      if (comment != "") {
+        dispatch(
+          userStatus({
+            id: id,
+            status: status,
+            user_id: cookies.get('cookie_data').id,
+            comment: comment
+          })
+        );
+    
+        setAnchorEl(null);
+
+      } else {
+        alert("Invalid comment.")
+
+      }
     };
 
 
@@ -123,13 +176,13 @@ function UserMenu(props) {
           onClose={handleClose}
         >
           <div>
-            <MenuItem onClick={()=>handleOpen()} disableRipple>
+            <MenuItem onClick={()=>handleModalOpen("more")} disableRipple>
               <VisibilityIcon/>
               View more
             </MenuItem>
             <Modal
-              open={open_m}
-              onClose={handleMClose}
+              open={open_more}
+              onClose={() => handleModalClose("more")}
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
             >
@@ -150,18 +203,123 @@ function UserMenu(props) {
               </Box>
             </Modal>
           </div>
-          <MenuItem onClick={() => usersStatus(props.user.id, 1)} disableRipple>
-            <RestoreIcon/>
-            Activate
-          </MenuItem>
-          <MenuItem onClick={() => usersStatus(props.user.id, 0)} disableRipple>
-            <UnpublishedIcon/>
-            Disable
-          </MenuItem>
-          <MenuItem onClick={() => usersStatus(props.user.id, 5)} disableRipple>
-            <DeleteIcon />
-            Delete
-          </MenuItem>
+
+          <div>
+            <MenuItem onClick={() => handleModalOpen("activate")} disableRipple>
+              <RestoreIcon/>
+              Activate
+            </MenuItem>
+            <Modal
+              open={open_activate}
+              onClose={() => handleModalClose("activate")}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                Activate user
+                </Typography>
+                <hr/>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                  Are you sure you want to activate this user?
+                </Typography>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Enter comment"
+                  name="comment"
+                  autoFocus
+                  onChange={setsComment}
+                  onKeyDown = {onKeyDown}
+                />
+                <Button variant = "outlined" sx={{mt:4}} onClick = {() => handleModalClose("activate")}>No</Button>
+                <Button variant = "outlined" sx={{mt:4, ml: 4}} 
+                  onClick = {() => {
+                    usersStatus(props.user.id, 1)
+                    handleModalClose("activate")
+                }}>Yes</Button>
+              </Box>
+            </Modal>
+          </div>
+
+          <div>
+            <MenuItem onClick={() => handleModalOpen("disable")} disableRipple>
+              <UnpublishedIcon/>
+              Disable
+            </MenuItem>
+            <Modal
+              open={open_disable}
+              onClose={() => handleModalClose("disable")}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                Disable user
+                </Typography>
+                <hr/>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                  Are you sure you want to disable this user?
+                </Typography>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Enter comment"
+                  name="comment"
+                  autoFocus
+                  onChange={setsComment}
+                  onKeyDown = {onKeyDown}
+                />
+                <Button variant = "outlined" sx={{mt:4}} onClick = {() => handleModalClose("disable")}>No</Button>
+                <Button variant = "outlined" sx={{mt:4, ml: 4}} 
+                  onClick = {() => {
+                    usersStatus(props.user.id, 0)
+                    handleModalClose("disable")
+                  }}>Yes</Button>
+              </Box>
+            </Modal>
+          </div>
+
+          <div>
+            <MenuItem onClick={() => handleModalOpen("delete")} disableRipple>
+              <DeleteIcon />
+              Delete
+            </MenuItem>
+            <Modal
+              open={open_delete}
+              onClose={() => handleModalClose("delete")}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                Delete user
+                </Typography>
+                <hr/>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                  Are you sure you want to delete this user?
+                </Typography>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Enter comment"
+                  name="comment"
+                  autoFocus
+                  onChange={setsComment}
+                  onKeyDown = {onKeyDown}
+                />
+                <Button variant = "outlined" sx={{mt:4}} onClick = {() => handleModalClose("delete")}>No</Button>
+                <Button variant = "outlined" sx={{mt:4, ml: 4}} 
+                   onClick = {() => {
+                    usersStatus(props.user.id, 5);
+                    handleModalClose("delete")
+                   }}>Yes</Button>
+              </Box>
+            </Modal>
+          </div>
         </StyledMenu>
       </>
     );

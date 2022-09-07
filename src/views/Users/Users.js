@@ -33,6 +33,7 @@ import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsers, getLogs, userStatus } from "./store";
 import Modal from '@mui/material/Modal';
+import { compareAsc, format } from 'date-fns'
 import UserMenu from "./Menu";
 
 function Copyright(props) {
@@ -106,6 +107,12 @@ const style = {
   p: 4,
 };
 
+const date = new Date();
+const month = parseInt(date.getMonth() + 1) < 10 ? "-0" + parseInt(date.getMonth() + 1) : "-" + parseInt(date.getMonth() + 1);
+const day = date.getDate()  < 10 ? "-0" + date.getDate()  : "-" + date.getDate();
+
+const today = date.getFullYear() + month + day;
+
 const theme = createTheme();
 
 function Users() {
@@ -114,20 +121,31 @@ function Users() {
   const store = useSelector((state) => state.users);
   const [users, setUsers] = React.useState([]);
   const [logs, setLogs] = React.useState([]);
-  const [start, setStart] = React.useState('');
-  const [end, setEnd] = React.useState('');
+  const [log_start, setLogStart] = React.useState('');
+  const [log_end, setLogEnd] = React.useState('');
+  const [user_start, setUserStart] = React.useState('');
+  const [user_end, setUserEnd] = React.useState('');
+  const [user_min_date, setUserMinDate] = React.useState('');
+  const [log_min_date, setLogMinDate] = React.useState('');
   const [status, setStatus] = React.useState(0);
 
   
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if(data.get("date1") && data.get("date2")) {
-      setStart(new Date(data.get("date1")).toLocaleDateString());
-      setEnd(new Date(data.get("date2")).toLocaleDateString());
+
+    if (data.get("date1") && data.get("date2")) {
+      setUserStart(new Date(data.get("date1")).toLocaleDateString());
+      setUserEnd(new Date(data.get("date2")).toLocaleDateString());
+
+    } else if (data.get("date3") && data.get("date4")) {
+      setLogStart(new Date(data.get("date3")).toLocaleDateString());
+      setLogEnd(new Date(data.get("date4")).toLocaleDateString());
 
     } else {
-      setStart("");
+      setLogStart("");
+      setUserStart("");
+
     }
   };
 
@@ -136,7 +154,14 @@ function Users() {
     setStatus(status + 1)
   };
 
+  const setUserDate = (event) => {
+    setUserMinDate(event.target.value)
+  };
   
+  const setLogDate = (event) => {
+    setLogMinDate(event.target.value)
+  };
+
   React.useEffect(() => {
     dispatch(getLogs())
     dispatch(getUsers())
@@ -144,13 +169,19 @@ function Users() {
     addUsers();
     addLogs();
 
-  }, [store.users.length, store.user_status, store.user_logs.length, status, start, end])
+  }, [store.users.length, store.user_status, store.user_logs.length, status, log_start, log_end, user_start, user_end])
   
 
+  //Adding users to the user table
   const addUsers = () => {
     var users = [];
 
     for (var i = 0; i < store.users.length; i++) {
+      var date = new Date(store.users[i].date_created).toLocaleDateString()
+      if (!(date >= user_start && date <= user_end) && user_start != '' && user_end != '') {
+        continue;
+      }
+
       var user = {};
 
       user.id = store.users[i].id;
@@ -163,7 +194,7 @@ function Users() {
       user.email = store.users[i].email;
       user.date_created = store.users[i].date_created;
       user.role = store.users[i].roles[0].name;
-      user.status = store.users[i].status == 1? <Chip label="active" color="success"/> : store.users[i].status == 0? <Chip label="inactive" /> : <Chip label="deleted" color="error"/>;;
+      user.status = store.users[i].status == 1? <Chip label="active" color="success"/> : store.users[i].status == 0? <Chip label="inactive" /> : <Chip label="deleted" color="error"/>;
       user.actions = <UserMenu user = {user} updateStatus = {updateStatus}/>;
       
       users.push(user);
@@ -173,20 +204,22 @@ function Users() {
   }
 
 
+  //Adding user logs to the table
   const addLogs = () => {
     var logs = [];
-           
+
     for (var i = 0; i < store.user_logs.length; i++) {
       var date = new Date(store.user_logs[i].date_created).toLocaleDateString()
-      if (!(date >= start && date <= end) && start != '' && end != '') {
+      if (!(date >= log_start && date <= log_end) && log_start != '' && log_end != '') {
         continue;
       }
 
       var log = {};
 
       log.performed_by = store.user_logs[i].user;
-      log.user_name = store.user_logs[i].user;
+      log.user_name = store.user_logs[i].target_user;
       log.action = store.user_logs[i].action;
+      log.comment = store.user_logs[i].comment;
       log.date_created = store.user_logs[i].date_created;
       
       logs.push(log);
@@ -261,6 +294,12 @@ function Users() {
         width: 270,
       },
       {
+        label: "Comment",
+        field: "comment",
+        sort: "asc",
+        width: 270,
+      },
+      {
         label: "Date Created",
         field: "date_created",
         sort: "asc",
@@ -315,11 +354,16 @@ function Users() {
                   name="date1"
                   label="Start"
                   type="date"
+                  onChange={setUserDate}
                   //defaultValue="2017-05-24"
                   sx={{ width: 220 }}
                   size="small"
                   InputLabelProps={{
                     shrink: true,
+                  }}
+
+                  inputProps={{
+                    max: today
                   }}
                 />
                 <TextField
@@ -327,11 +371,18 @@ function Users() {
                   label="End"
                   type="date"
                   //defaultValue="2017-05-24"
+                  disabled = {user_min_date ? false : true}
                   size="small"
                   sx={{ width: 220, ml: 2, height: 20}}
                   InputLabelProps={{
                     shrink: true,
                   }}
+
+                  inputProps={{
+                    min: user_min_date,
+                    max: today
+                  }}
+
                 />
                 <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>
               </Box>
@@ -361,25 +412,35 @@ function Users() {
                   onSubmit={handleSubmit}              
                   sx={{mb: 2, mt: 2}}>
                   <TextField
-                    name="date1"
+                    name="date3"
                     label="Start"
                     type="date"
                     //defaultValue="2017-05-24"
+                    onChange={setLogDate}
                     sx={{ width: 220 }}
                     size="small"
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    inputProps={{
+                      max: today
+                    }}
                   />
                   <TextField
-                    name="date2"
+                    name="date4"
                     label="End"
                     type="date"
+                    disabled = {log_min_date ? false : true}
                     //defaultValue="2017-05-24"
                     size="small"
                     sx={{ width: 220, ml: 2, height: 20}}
                     InputLabelProps={{
                       shrink: true,
+                    }}
+
+                    inputProps={{
+                      min: log_min_date,
+                      max: today
                     }}
                   />
                   <Button type="submit" variant="outlined" sx={{ mt: 0.1, ml: 2 }} startIcon={<SearchIcon />}>Filter</Button>

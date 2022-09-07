@@ -52,10 +52,11 @@ export const appProjectsSlice = createSlice({
           //console.log(action.payload)
       })
       .addCase(getLogs.fulfilled, (state, action) => {
-        state.project_logs = action.payload.data.logs
+        state.project_logs = action.payload.data.logs.reverse()
       })
       .addCase(projectStatus.fulfilled, (state, action) => {
           state.project_status = state.project_status + 1;
+          console.log(action.payload)
       })
       .addCase(projectCount.fulfilled, (state, action) => {
         state.active_projects = action.payload.data.active
