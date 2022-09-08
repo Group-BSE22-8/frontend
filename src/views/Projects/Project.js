@@ -29,9 +29,9 @@ import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import RestoreIcon from '@mui/icons-material/Restore';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getProjects, getLogs, projectStatus, setStatus, projectCount, appCount } from "./store";
+import { specificProjects, getProjects, getLogs, projectStatus, setStatus, projectCount, appCount } from "./store";
 import Cookies from 'universal-cookie'
 import ProjectMenu from "./Menu";
 
@@ -104,6 +104,7 @@ const StyledMenu = styled((props) => (
 
 export default function Project() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const cookies = new Cookies()
   const store = useSelector((state) => state.projects);
@@ -148,14 +149,22 @@ export default function Project() {
 
 
   React.useEffect(() => {
-     dispatch(projectCount())
-     dispatch(appCount())
-     dispatch(getLogs())
-     dispatch(getProjects())
 
+     if (location.state) {
+        dispatch(specificProjects({
+          user_id: location.state.user_id
+        }))
+ 
+     } else {
+        dispatch(projectCount())
+        dispatch(appCount())
+        dispatch(getProjects())
+     }
+
+     dispatch(getLogs())
      addProjects();
      addLogs();
-
+     //alert(location.state.user_id)
   }, [store.projects.length, store.project_logs.length, store.project_status, project_start, project_end, log_start, log_end, anchorEl])
 
 

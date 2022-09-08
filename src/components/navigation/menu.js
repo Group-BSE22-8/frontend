@@ -95,10 +95,10 @@ export default function CustomizedMenu(props) {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose} disableRipple>
+        {/*<MenuItem onClick={handleClose} disableRipple>
           <Person />
           Profile
-        </MenuItem>
+      </MenuItem>*/}
         <MenuItem onClick={logout} disableRipple>
           <Logout />
           Logout

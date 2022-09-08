@@ -161,6 +161,11 @@ function UserMenu(props) {
     };
 
 
+    const openProjects = (user_id) => {
+      navigate("/projects", { state:{user_id: user_id}})
+    }
+
+
     return (
        <>
         <MoreVertIcon   
@@ -199,7 +204,7 @@ function UserMenu(props) {
                 </Typography><Typography id="modal-modal-description" sx={{ mt: 2 }}>
                   Verified: {props.user.verified ? "TRUE" : "FALSE"}             
                 </Typography>
-                <Button variant = "outlined" sx={{mt:4}}>View Projects</Button>
+                <Button variant = "outlined" sx={{mt:4}} onClick = {()=>{openProjects(props.user.id)}}>View Projects</Button>
               </Box>
             </Modal>
           </div>

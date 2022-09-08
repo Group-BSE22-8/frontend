@@ -43,8 +43,9 @@ import {
 } from "recharts";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getApps, getLogs, getOwner, applicationStatus, appCount, getProjectActivity, disableProject } from "./store";
+import { getApps, getLogs, getOwner, databaseCount, applicationStatus, appCount, getProjectActivity, disableProject } from "./store";
 import Cookies from 'universal-cookie'
+import { useNavigate,useLocation } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -125,55 +126,10 @@ const StyledMenu = styled((props) => (
 }));
 
 
-const data = [
-  {
-    name: "A",
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: "B",
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: "C",
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: "D",
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: "E",
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: "F",
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: "G",
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
-
 
 export default function Application() {
-  //const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();  
   const store = useSelector((state) => state.applications);
   const cookies = new Cookies()
   const [apps, setApps] = React.useState([]);
@@ -238,18 +194,15 @@ export default function Application() {
 
 
   React.useEffect(() => {
+     if (!cookies.get('project_data')) {
+        navigate("/projects")
+     }
+
      dispatch(getOwner(cookies.get('project_data').owner_id))
      dispatch(appCount())
      dispatch(getLogs())
      dispatch(getApps(cookies.get('project_data').project_id))
-     dispatch(getProjectActivity(
-      cookies.get('project_data').project_id, 
-      {
-        start: 0,
-        end: 0,
-        step: '1h'
-      }
-     ))
+     dispatch(databaseCount({project_id: cookies.get('project_data').project_id}))
 
      addApps();
      addLogs();
@@ -268,7 +221,10 @@ export default function Application() {
      })
     )
 
-    setAnchorEl(null);
+      setAnchorEl(null);
+      alert("Project Disabled.")
+
+      navigate("/projects")
 
     } else {
       alert("Invalid comment.")
@@ -463,6 +419,7 @@ export default function Application() {
                   <Box
                     sx={{
                       display: "flex",
+                      mt: 0.5
                     }}
                   >
                     <span sx ={{color: "black"}}>Status:</span>
@@ -568,7 +525,7 @@ export default function Application() {
                       textAlign: "center",
                     }}
                   >
-                    <Typography sx={{ fontSize: 17 }}>Resources</Typography>
+                    <Typography sx={{ fontSize: 17 }}>Databases</Typography>
                   </Box>
 
                   <Box
@@ -577,54 +534,9 @@ export default function Application() {
                     }}
                   >
                     <Box sx={{ flexGrow: 1, textAlign: "center" }}>
-                      <Typography sx={{ fontSize: 40 }}>43</Typography>
-                      <Typography sx={{ fontSize: 12 }}>Active</Typography>
-                    </Box>
-                    <Box sx={{ flexGrow: 1, textAlign: "center" }}>
-                      <Typography sx={{ fontSize: 40 }}>12</Typography>
-                      <Typography sx={{ fontSize: 12 }}>Disabled</Typography>
+                      <Typography sx={{ fontSize: 50 }}>{store.databases}</Typography>
                     </Box>
                   </Box>
-                </Paper>
-                  </Grid>
-
-              <Grid item xs={12} sm={3} md={3} lg={4}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    height: 200,
-                    ":hover": {
-                      boxShadow: 5,
-                    },
-                  }}
-                >
-                  <ResponsiveContainer width="100%" height="85%">
-                    <LineChart
-                      width={500}
-                      height={300}
-                      data={data}
-                      margin={{
-                        top: 10,
-                        right: 40,
-                        left: 0,
-                        bottom: 5,
-                      }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="pv"
-                        stroke="#008ac1"
-                        activeDot={{ r: 8 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                  <Typography sx={{ textAlign: "center", fontSize: 15 }}>
-                    Activity
-                  </Typography>
                 </Paper>
               </Grid>
             </Grid>

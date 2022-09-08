@@ -185,10 +185,7 @@ function Users() {
       var user = {};
 
       user.id = store.users[i].id;
-      user.name = <Link 
-      href="/applications"
-      onClick={() => {}}
-      >{store.users[i].name}</Link>;
+      user.name = store.users[i].name;
       user.is_beta_user = store.users[i].is_beta_user;
       user.verified = store.users[i].name.verified;
       user.email = store.users[i].email;

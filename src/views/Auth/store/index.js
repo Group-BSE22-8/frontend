@@ -32,13 +32,17 @@ export const appAuthSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(adminLogin.fulfilled, (state, action) => {
-          if (action.payload.status && action.payload.status == "success") {
-            state.status = action.payload.status
-            state.cookie_data.token = action.payload.data.access_token
-            state.cookie_data.username = action.payload.data.username
-            state.cookie_data.id = action.payload.data.id
+          if (action.payload) {
+            if (action.payload.status == "success") {
+              state.status = action.payload.status
+              state.cookie_data.token = action.payload.data.access_token
+              state.cookie_data.username = action.payload.data.username
+              state.cookie_data.id = action.payload.data.id
+            } else {
+              state.status = action.payload.status
+            }
           } else {
-            state.status = action.payload.status
+             state.status = "connection error"
           }
       })
       .addCase(setStatus.fulfilled, (state, action) => {

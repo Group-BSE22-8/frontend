@@ -26,7 +26,7 @@ import { MDBDataTable } from "mdbreact";
 import "mdbreact/dist/css/mdb.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import 'bootstrap-css-only/css/bootstrap.min.css';
-import { clusterStatus, clusterLogs } from "./store";
+import { clusterStatus, clusterLogs, clusterMetrics, clusterMachines } from "./store";
 import { Avatar } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +34,14 @@ import { Hub } from "@mui/icons-material";
 import { ButtonBase } from "@mui/material";
 import Modal from '@mui/material/Modal';
 import cluster from "../images/cluster.png";
+import {
+  PieChart,
+  Pie,
+  Tooltip,
+  Sector,
+  Cell,
+  ResponsiveContainer
+} from "recharts";
 
 function Copyright(props) {
   return (
@@ -53,39 +61,8 @@ function Copyright(props) {
   );
 }
 
-// Sample data
-const data1 = [
-  { argument: "Monday", value: 60 },
-  { argument: "Tuesday", value: 70 },
-  { argument: "Wednesday", value: 20 },
-  { argument: "Thursday", value: 50 },
-  { argument: "Friday1", value: 80 },
-  { argument: "Friday2", value: 90 },
-  { argument: "Friday2", value: 40 },
-];
-// Sample data
-const data2 = [
-  { argument: "Monday", value: 60 },
-  { argument: "Tuesday", value: 80 },
-  { argument: "Wednesday", value: 30 },
-  { argument: "Thursday", value: 70 },
-  { argument: "Friday1", value: 50 },
-  { argument: "Friday2", value: 90 },
-  { argument: "Friday2", value: 45 },
-];
-// Sample data
-const data3 = [
-  { argument: "Monday", value: 20 },
-  { argument: "Tuesday", value: 70 },
-  { argument: "Wednesday", value: 35 },
-  { argument: "Thursday", value: 90 },
-  { argument: "Friday1", value: 30 },
-  { argument: "Friday2", value: 100 },
-  { argument: "Friday2", value: 60 },
-];
 
-
-const style = {
+const style1 = {
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -98,6 +75,19 @@ const style = {
   p: 4,
 };
 
+
+const style2 = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '40%',
+  //height: '40%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const date = new Date();
 const month = parseInt(date.getMonth() + 1) < 10 ? "-0" + parseInt(date.getMonth() + 1) : "-" + parseInt(date.getMonth() + 1);
@@ -114,18 +104,26 @@ function Infrastructure(props) {
   const [logs, setLogs] = React.useState([]);
   const [status, setStatus] = React.useState("");
   const [open, setOpen] = React.useState(false);
+  const [vm_open, setVMOpen] = React.useState(false);
   const [name, setName] = React.useState("");
   const [log_start, setLogStart] = React.useState('');
   const [log_end, setLogEnd] = React.useState('');
   const [log_min_date, setLogMinDate] = React.useState('');
+  const [mem, setMem] = React.useState(0);
+  const [maxmem, setMaxMem] = React.useState(0);
+  const [disk, setDisk] = React.useState(0);
+  const [maxdisk, setMaxDisk] = React.useState(0);
+  const [cpu, setCPU] = React.useState(0);
+  const [maxcpu, setMaxCPU] = React.useState(0);
 
 
   React.useEffect(() => {
     addStatusMetrics();
     dispatch(clusterLogs())
+    dispatch(clusterMetrics())
     addLogs();
 
-  }, [store.status.length, store.cluster_logs.length, log_start, log_end])
+  }, [store.status.length, store.virtual_machines, store.cluster_data.length, store.cluster_logs.length, log_start, log_end])
 
 
   const handleClose = () => {
@@ -158,6 +156,8 @@ function Infrastructure(props) {
       total++;
     }
 
+
+  
     /*var test = {}
     test.value = 0;
     status.push(test);
@@ -190,10 +190,84 @@ function Infrastructure(props) {
   }
 
 
+  const addClusterData = (name) => {
+    var mem_total = 0;
+    var maxmem_total = 0;
+    var disk_total = 0;
+    var maxdisk_total = 0;
+    var cpu_total = 0;
+    var maxcpu_total = 0;
+
+    for (var i = 0; i < store.cluster_data.length; i++) {
+      if(store.cluster_data[i].id == name) {
+        mem_total = mem_total + store.cluster_data[i].mem;
+        maxmem_total =  maxmem_total + store.cluster_data[i].maxmem;
+        disk_total =  disk_total + store.cluster_data[i].disk;
+        maxdisk_total =  maxdisk_total + store.cluster_data[i].maxdisk;
+        cpu_total =  cpu_total + store.cluster_data[i].cpu;
+        maxcpu_total =  maxcpu_total + store.cluster_data[i].maxcpu;
+
+        setStatus(store.cluster_data[i].status)
+      }
+    }
+
+    setMem(mem_total);
+    setMaxMem(maxmem_total);
+    setDisk(disk_total);
+    setMaxDisk(maxdisk_total);
+    setCPU(cpu_total);
+    setMaxCPU(maxcpu_total);
+  }
+
+
+  const handleVMClose = () => {      
+      setVMOpen(false);
+  }
+
+  const handleVMOpen = () => {
+    setVMOpen(true);
+  };
+
+
+  const memory = [
+    {
+      name: "used",
+      value: mem
+    },
+    {
+      name: "remaining",
+      value: maxmem-mem
+    }
+  ];
+
+  const disc = [
+    {
+      name: "used",
+      value: disk
+    },
+    {
+      name: "remaining",
+      value: maxdisk-disk
+    }
+  ];
+
+
+  const activity = [
+    {
+      name: "used",
+      value: cpu
+    },
+    {
+      name: "remaining",
+      value: maxcpu-cpu
+    }
+  ];
+
+
+
   const addLogs = () => {
     var logs = [];
-    var cluster_status = store.cluster_logs.length > 0 && store.cluster_logs[0].status == "success" ? "online" : "offline";
-
+    
     for (var i = 0; i < store.cluster_logs.length; i++) {
       var date = new Date(store.cluster_logs[i].date_created).toLocaleDateString()
       if(!(date >= log_start && date <= log_end) && log_start != '' && log_end != '') {
@@ -210,16 +284,19 @@ function Infrastructure(props) {
     }
 
     setLogs(logs);
-    setStatus(cluster_status)
   }
 
 
   const handleChange = (event) => {
     setName(event.target.value)
 
+    addClusterData(event.target.value);
+
     dispatch(clusterStatus({
       cluster_id: event.target.value
     }))
+
+    dispatch(clusterMachines({node_id : event.target.value.slice(5)}))
   }
 
   const setLogDate = (event) => {
@@ -238,6 +315,22 @@ function Infrastructure(props) {
     } else {
       setLogStart("");
     }
+  };
+
+
+  const COLORS = ['#0088FE', '#FFBB28'];
+
+  const RADIAN = Math.PI / 180;
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
   };
 
 
@@ -292,7 +385,7 @@ function Infrastructure(props) {
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
             >
-              <Box sx={style}>
+              <Box sx={style1}>
                   <Graph data={uptime} title="Uptime" xaxis = {"Date"} yaxis = {"Status"}/>
               </Box>
             </Modal>
@@ -330,6 +423,45 @@ function Infrastructure(props) {
                   </Select>
                 </FormControl>
 
+                {name ? 
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  sx={{
+                    mt: 3
+                  }}
+                  onClick={()=>handleVMOpen()}
+                >View virtual machines</Button>: ""}
+                <Modal
+                  open={vm_open}
+                  onClose={() => handleVMClose()}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box sx={style2}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    {name + " "} Virtual Machines.
+                    </Typography>
+                    <hr/>
+
+                    {store.virtual_machines.map((item) => {
+                      return(
+                        <>
+                          <Typography>Machine ID: {item.vmid}</Typography>
+                          <Typography>Machine Name: {item.name}</Typography>
+                          <Typography>Maximum Disk: {item.maxdisk / 1073741824}GB</Typography>
+                          <Typography>Machine CPUS: {item.cpus}</Typography>
+                          <Typography>Machine Status: {item.status}</Typography>
+                          <hr/>
+                        </>
+                      );
+                    })}
+
+                    <Button variant = "outlined" sx={{mt:4}} onClick = {() => handleVMClose()}>Close</Button>
+                  </Box>
+                </Modal>
+
+
                 <Typography sx={{textAlign: "center", mt: 2, mb: 2, backgroundColor: "#008ac1", color: "#fff", borderRadius: 2}}>
                   <b>Create Nodes</b>
                 </Typography>
@@ -356,7 +488,7 @@ function Infrastructure(props) {
                     <Hub sx={{ color: "#fff", marginRight: 2 }} />
                   </Box>
 
-                  {uptime.length > 0 ? 
+                  {name ? 
                   <CardContent>
                       <Grid container>
                         {/*<Typography sx={{ fontSize: 15, marginLeft: 5, marginRight: 3 }}>
@@ -367,7 +499,7 @@ function Infrastructure(props) {
                           {""}
                         </Typography>*/}
                         <Typography sx={{ fontSize: 15,  marginLeft: 5, marginRight: 3 }}>
-                          <b>Active Nodes: </b>
+                          <b>Active Nodes: {store.count}</b>
                           <span className="text-primary" style={{ fontSize: 18 }}>
                             {" "}
                           </span>
@@ -407,12 +539,33 @@ function Infrastructure(props) {
                           <ButtonBase component = "div">
                             <Paper
                               sx={{
-                                height: 160,
+                                height: 200,
                                 width: 300,
                               }}
                               onClick={() => {}}
                             >
-                              <Graph data={data1} title="Network Activity" xaxis = {"Date"} yaxis = {"Activity"}/>
+                              <ResponsiveContainer width="100%" height="85%">
+                                <PieChart width={200} height={400}>
+                                  <Pie
+                                    data={memory}
+                                    cx="50%"
+                                    cy="50%"
+                                    labelLine={false}
+                                    label={renderCustomizedLabel}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    dataKey="value"
+                                  >
+                                    {memory.map((entry, index) => (
+                                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                  </Pie>
+                                  <Tooltip />
+                                </PieChart>
+                              </ResponsiveContainer>
+                              <Typography sx={{ textAlign: "center", fontSize: 15 }}>
+                                Memory Usage
+                              </Typography>
                             </Paper>
                           </ButtonBase>
                         </Grid>
@@ -424,12 +577,33 @@ function Infrastructure(props) {
                           <ButtonBase component = "div">
                             <Paper
                               sx={{
-                                height: 160,
+                                height: 200,
                                 width: 300,
                               }}
                               onClick={() => {}}
                             >
-                              <Graph data={data2} title="Load" xaxis = {"Date"} yaxis = {"Load"}/>
+                              <ResponsiveContainer width="100%" height="85%">
+                                <PieChart width={800} height={400}>
+                                  <Pie
+                                    data={activity}
+                                    cx="50%"
+                                    cy="50%"
+                                    labelLine={false}
+                                    label={renderCustomizedLabel}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    dataKey="value"
+                                  >
+                                    {activity.map((entry, index) => (
+                                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                  </Pie>
+                                  <Tooltip />
+                                </PieChart>
+                              </ResponsiveContainer>
+                              <Typography sx={{ textAlign: "center", fontSize: 15 }}>
+                                CPU Usage
+                              </Typography>
                             </Paper>
                           </ButtonBase>
                         </Grid>
@@ -437,12 +611,33 @@ function Infrastructure(props) {
                           <ButtonBase component = "div">
                             <Paper
                               sx={{
-                                height: 160,
+                                height: 200,
                                 width: 300,
                               }}
                               onClick={() => {}}
                             >
-                              <Graph data={data3} title="Memory" xaxis = {"Date"} yaxis = {"Memory"}/>
+                              <ResponsiveContainer width="100%" height="85%">
+                                <PieChart width={800} height={400}>
+                                  <Pie
+                                    data={disc}
+                                    //cx={120}
+                                    //cy={200}
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                  >
+                                    {disc.map((entry, index) => (
+                                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                  </Pie>
+                                  <Tooltip />
+                                </PieChart>
+                              </ResponsiveContainer>
+                              <Typography sx={{ textAlign: "center", fontSize: 15 }}>
+                                Disk Usage
+                              </Typography>
                             </Paper>
                           </ButtonBase>
                         </Grid>

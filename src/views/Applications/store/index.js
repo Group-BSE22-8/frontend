@@ -47,6 +47,10 @@ export const appCount = createAsyncThunk('appProjects/appCount', async () => {
   return response.data
 })
 
+export const databaseCount = createAsyncThunk('appProjects/databaseCount', async (data) => {
+  const response = await axios.post('http://127.0.0.1:5000/projects/specific_databases', data)
+  return response.data
+})
 
 export const appAppsSlice = createSlice({
   name: 'appApps',
@@ -54,6 +58,7 @@ export const appAppsSlice = createSlice({
     project: [],
     owner: '',
     app_status: 0,
+    databases: 0,
     apps: [],
     app_logs: []
   },
@@ -79,7 +84,7 @@ export const appAppsSlice = createSlice({
       })
       .addCase(applicationStatus.fulfilled, (state, action) => {
           state.app_status = state.app_status + 1;
-          //console.log(action.payload)
+          console.log(action.payload)
       })
       .addCase(disableProject.fulfilled, (state, action) => {
         state.app_status = state.app_status + 1;
@@ -89,6 +94,10 @@ export const appAppsSlice = createSlice({
         //console.log(action.payload)
         state.active_apps = action.payload.data.active
         state.inactive_apps = action.payload.data.inactive
+      })
+      .addCase(databaseCount.fulfilled, (state, action) => {
+        //console.log(action.payload)
+        state.databases = action.payload.data.databases
       })
   }
 })

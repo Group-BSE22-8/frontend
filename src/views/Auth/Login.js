@@ -67,6 +67,14 @@ export default function SignIn() {
         text: "Wrong email or password." 
       });   
       setLoading(false) 
+
+    } else if (store.status === 'connection error') {
+      setValues({
+        ...values,
+        visibility: true,
+        text: "Connection Error." 
+      });   
+      setLoading(false) 
     }
 
   }, [store.status])
@@ -122,6 +130,13 @@ export default function SignIn() {
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
+        <Box>
+          <Typography>
+            
+          </Typography>
+        </Box>
+
+
         <Grid
           item
           xs={false}

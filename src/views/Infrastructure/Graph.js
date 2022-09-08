@@ -17,7 +17,7 @@ import {
 function Graph(props) {
   return (
     <>
-      <ResponsiveContainer width="100%" height="80%">
+      <ResponsiveContainer width="100%" height="85%">
         <LineChart
           width={200}
           height={350}
