@@ -202,6 +202,8 @@ export default function Project() {
       let status = store.projects[i].status;
 
       project.name = <Link
+       href="#"
+       variant = "body2"
        onClick={() => 
           projectDetails(
             name, 

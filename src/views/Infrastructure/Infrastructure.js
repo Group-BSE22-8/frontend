@@ -400,7 +400,7 @@ function Infrastructure(props) {
                 mr={4}
                 component={Paper}
                 elevation={4}
-                sx={{ height: 300, pr: 2}}
+                sx={{ height: 200, pr: 2}}
               >
                 <Typography sx={{ textAlign: "center", mb: 2, backgroundColor: "#008ac1", color: "#fff", borderRadius: 2}}>
                   <b>Select Clusters</b>
@@ -462,9 +462,9 @@ function Infrastructure(props) {
                 </Modal>
 
 
-                <Typography sx={{textAlign: "center", mt: 2, mb: 2, backgroundColor: "#008ac1", color: "#fff", borderRadius: 2}}>
+                {/*<Typography sx={{textAlign: "center", mt: 2, mb: 2, backgroundColor: "#008ac1", color: "#fff", borderRadius: 2}}>
                   <b>Create Nodes</b>
-                </Typography>
+                  </Typography>*/}
               </Grid>
 
               <Grid                 
@@ -508,7 +508,7 @@ function Infrastructure(props) {
                           <b>Probability of uptime:</b>
                           <span className="text-info" style={{ fontSize: 18 }}>
                             {" "}
-                            <b>{probability}%</b>{" "}
+                            <b>{probability.toFixed(2)}%</b>{" "}
                           </span>
                         </Typography>
                         <Typography sx={{ fontSize: 15, marginRight: 3 }}>
@@ -530,7 +530,7 @@ function Infrastructure(props) {
                               }}
                               onClick={() => handleOpen()}
                             >
-                              <Graph data={uptime} title="Uptime" xaxis = {"Date"} yaxis = {"Status"}/>
+                              <Graph data={uptime} title="Availability" xaxis = {"Date"} yaxis = {"Status"}/>
                             </Paper>
                           </ButtonBase>
                         </Grid>

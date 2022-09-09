@@ -22,11 +22,6 @@ export const getApps = createAsyncThunk('appApps/getProjectActivity', async (id)
   return response.data
 })
 
-export const getProjectActivity = createAsyncThunk('appApps/getApps', async (id, data) => {
-  const response = await axios.post('http://127.0.0.1:5000/projects/'+id+'/metrics/network' , data, { headers: {"Authorization" : `Bearer ${cookies.get('cookie_data').token}`} })
-  return response.data
-})
-
 export const getLogs = createAsyncThunk('appLogs/getLogs', async () => {
   const response = await axios.get('http://127.0.0.1:5000/apps/app_logs')
   return response.data
@@ -65,15 +60,15 @@ export const appAppsSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
+       .addCase(applicationStatus.fulfilled, (state, action) => {
+          state.app_status = state.app_status + 1;
+          //console.log(action.payload)
+       })
       .addCase(getProject.fulfilled, (state, action) => {
           state.project = action.payload.data.project
       })
       .addCase(getApps.fulfilled, (state, action) => {
           state.apps = action.payload.data.apps
-      })
-      .addCase(getProjectActivity.fulfilled, (state, action) => {
-        //state.apps = action.payload.data.apps
-        console.log(action.payload)
       })
       .addCase(getLogs.fulfilled, (state, action) => {
         state.app_logs = action.payload.data.logs.reverse()
@@ -82,13 +77,9 @@ export const appAppsSlice = createSlice({
       .addCase(getOwner.fulfilled, (state, action) => {
           state.owner = action.payload.data.user.name
       })
-      .addCase(applicationStatus.fulfilled, (state, action) => {
-          state.app_status = state.app_status + 1;
-          console.log(action.payload)
-      })
       .addCase(disableProject.fulfilled, (state, action) => {
         state.app_status = state.app_status + 1;
-        console.log(action.payload)
+        //console.log(action.payload)
       })
       .addCase(appCount.fulfilled, (state, action) => {
         //console.log(action.payload)

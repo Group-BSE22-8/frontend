@@ -43,9 +43,9 @@ import {
 } from "recharts";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getApps, getLogs, getOwner, databaseCount, applicationStatus, appCount, getProjectActivity, disableProject } from "./store";
+import { getApps, getLogs, getOwner, databaseCount, appCount, disableProject } from "./store";
 import Cookies from 'universal-cookie'
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -198,10 +198,10 @@ export default function Application() {
         navigate("/projects")
      }
 
+     dispatch(getApps(cookies.get('project_data').project_id))
      dispatch(getOwner(cookies.get('project_data').owner_id))
      dispatch(appCount())
      dispatch(getLogs())
-     dispatch(getApps(cookies.get('project_data').project_id))
      dispatch(databaseCount({project_id: cookies.get('project_data').project_id}))
 
      addApps();

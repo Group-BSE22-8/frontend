@@ -46,14 +46,14 @@ export const appDashSlice = createSlice({
     applications: 0,
     users: 0,
     databases: 0,
-    cluster_data: {},
+    cluster_data: response.data,
     all_logs: [],
   },
   reducers: {},
   extraReducers: builder => {
     builder
       .addCase(clusterMetrics.fulfilled, (state, action) => {
-        state.cluster_data = action.payload.data.cluster_data.data 
+        //state.cluster_data = action.payload.data.cluster_data.data 
         //console.log(action.payload)
       })
       .addCase(userCount.fulfilled, (state, action) => {

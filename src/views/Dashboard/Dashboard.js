@@ -123,14 +123,14 @@ function DashboardContent() {
       var cluster = {};
 
       cluster.id = store.cluster_data[i].id
-      cluster.maxmem = store.cluster_data[i].maxmem / 1073741824 + " GB";
-      cluster.mem = store.cluster_data[i].mem / 1073741824 + " GB";
-      cluster.maxdisk = store.cluster_data[i].maxdisk / 1073741824 + " GB";
-      cluster.disk = store.cluster_data[i].disk / 1073741824 + " GB";
+      cluster.maxmem = (store.cluster_data[i].maxmem / 1073741824).toFixed(2) + " GB";
+      cluster.mem = (store.cluster_data[i].mem / 1073741824).toFixed(2) + " GB";
+      cluster.maxdisk = (store.cluster_data[i].maxdisk / 1073741824).toFixed(2) + " GB";
+      cluster.disk = (store.cluster_data[i].disk / 1073741824).toFixed(2) + " GB";
       cluster.maxcpu = store.cluster_data[i].maxcpu;
       cluster.cpu = store.cluster_data[i].cpu;
       cluster.status = store.cluster_data[i].status;
-      cluster.uptime = store.cluster_data[i].uptime / 3600 + " hr";
+      cluster.uptime = (store.cluster_data[i].uptime / 3600).toFixed(2) + " hr";
       
       clusters.push(cluster);
 
